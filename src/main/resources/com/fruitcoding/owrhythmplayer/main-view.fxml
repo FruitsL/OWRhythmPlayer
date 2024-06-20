@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fruitcoding.owrhythmplayer.MainController">
+   <children>
+      <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+         <top>
+            <MenuBar BorderPane.alignment="CENTER">
+              <menus>
+                <Menu mnemonicParsing="false" text="설정">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="조작">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="단축키">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+            </MenuBar>
+         </top>
+         <center>
+            <GridPane BorderPane.alignment="CENTER">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="이 곳에 음악 파일을 드래그 앤 드랍하세요." textAlignment="CENTER" GridPane.columnSpan="4">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label contentDisplay="TOP" text="채보 파일" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin></Label>
+                  <SplitMenuButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="SplitMenuButton" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Action 1" />
+                      <MenuItem mnemonicParsing="false" text="Action 2" />
+                    </items>
+                  </SplitMenuButton>
+                  <Label text="재생 장치" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin></Label>
+                  <SplitMenuButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="SplitMenuButton" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Action 1" />
+                      <MenuItem mnemonicParsing="false" text="Action 2" />
+                    </items>
+                  </SplitMenuButton>
+                  <Label text="음량" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin></Label>
+                  <Slider maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label text="시작 딜레이" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin></Label>
+                  <TextField GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                  <Label text="재생 장치" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin></Label>
+                  <SplitMenuButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="SplitMenuButton" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="Action 1" />
+                      <MenuItem mnemonicParsing="false" text="Action 2" />
+                    </items>
+                  </SplitMenuButton>
+                  <Label text="음량" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin></Label>
+                  <Slider maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin></Slider>
+                  <Label text="시작 딜레이" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin></Label>
+                  <TextField GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                  <Button alignment="CENTER" mnemonicParsing="false" text="재생" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+                     <GridPane.margin>
+                        <Insets right="10.0" />
+                     </GridPane.margin>
+                  </Button>
+                  <Button alignment="CENTER" mnemonicParsing="false" text="일시정지" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                     <GridPane.margin>
+                        <Insets left="10.0" />
+                     </GridPane.margin></Button>
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+               </BorderPane.margin>
+            </GridPane>
+         </center>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin></BorderPane>
+   </children>
+</VBox>
