@@ -11,7 +11,7 @@ class LoggerUtilTest {
         trace("Trace Log");
         debug("Debug Log");
         info("Info Log");
-        warn("Warning Log");
+        warn("Warning Log!");
         error("Error Log");
         fatal("Fatal Log");
     }
