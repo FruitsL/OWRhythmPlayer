@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile=C:/Users/LemonFruit/IdeaProjects/OWRhythmPlayer/jar/jave-1.0.2/jave-1.0.2.jar -DgroupId=it.sauronsoftware -DartifactId=jave -Dversion=1.0.2 -Dpackaging=jar
