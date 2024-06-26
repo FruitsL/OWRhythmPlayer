@@ -6,7 +6,9 @@
 <?import javafx.scene.text.*?>
 
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fruitcoding.owrhythmplayer.MainController">
+<?import com.fruitcoding.owrhythmplayer.controller.component.SpeakerSplitMenuButton?>
+<?import com.fruitcoding.owrhythmplayer.controller.component.NumericTextField?>
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fruitcoding.owrhythmplayer.controller.MainController">
    <children>
       <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
          <top>
@@ -60,7 +62,7 @@
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
-                  <SplitMenuButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="SplitMenuButton" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                  <SplitMenuButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="None" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
                     <items>
                       <MenuItem mnemonicParsing="false" text="Action 1" />
                       <MenuItem mnemonicParsing="false" text="Action 2" />
@@ -70,18 +72,13 @@
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
-                  <SplitMenuButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="SplitMenuButton" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2">
-                    <items>
-                      <MenuItem mnemonicParsing="false" text="Action 1" />
-                      <MenuItem mnemonicParsing="false" text="Action 2" />
-                    </items>
-                  </SplitMenuButton>
+                  <SpeakerSplitMenuButton fx:id="speakerSplitMenuButton1" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="None" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2"/>
                   <Label text="음량" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
                   <Slider maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Label text="시작 딜레이" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+                  <Label text="시작 딜레이 (ms)" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
@@ -90,12 +87,7 @@
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
-                  <SplitMenuButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="SplitMenuButton" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4">
-                    <items>
-                      <MenuItem mnemonicParsing="false" text="Action 1" />
-                      <MenuItem mnemonicParsing="false" text="Action 2" />
-                    </items>
-                  </SplitMenuButton>
+                  <SpeakerSplitMenuButton fx:id="speakerSplitMenuButton2" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="None" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4"/>
                   <Label text="음량" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets right="10.0" />
@@ -104,11 +96,11 @@
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin></Slider>
-                  <Label text="시작 딜레이" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+                  <Label text="시작 딜레이 (ms)" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
-                  <TextField GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                  <NumericTextField fx:id="speakerDelayTextField2" GridPane.columnIndex="3" GridPane.rowIndex="5" />
                   <Button alignment="CENTER" mnemonicParsing="false" text="재생" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
                      <GridPane.margin>
                         <Insets right="10.0" />
