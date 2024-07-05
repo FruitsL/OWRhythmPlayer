@@ -34,8 +34,8 @@ class AudioPlayerTest {
 
         AudioPlayer player1 = new AudioPlayer(outputs.get(1), file);
         AudioPlayer player2 = new AudioPlayer(outputs.get(3), file);
-        player1.play(1000L);
-        player2.play(3000L);
+        player1.play(1000L, 100.0f);
+        player2.play(3000L, 100.0f);
 
         latch.await(15, TimeUnit.SECONDS); // n초 후 테스트 종료
     }
@@ -59,7 +59,7 @@ class AudioPlayerTest {
         outputs.forEach(i -> info(i.getName()));
 
         AudioPlayer player1 = new AudioPlayer(outputs.get(1), file);
-        player1.play(1000L);
+        player1.play(1000L, 100.0f);
 
         Thread.sleep(7000L);
         player1.stop(); // n초 후 중지
@@ -86,13 +86,13 @@ class AudioPlayerTest {
         outputs.forEach(i -> info(i.getName()));
 
         AudioPlayer player1 = new AudioPlayer(outputs.get(1), file);
-        player1.play(1000L);
+        player1.play(1000L, 100.0f);
 
         Thread.sleep(7000L);
         player1.pause(); // n초 후 일시중지
 
         Thread.sleep(3000L);
-        player1.play(0L); // n초 후 재생
+        player1.play(0L, 100.0f); // n초 후 재생
 
         latch.await(15, TimeUnit.SECONDS); // n초 후 테스트 종료
     }

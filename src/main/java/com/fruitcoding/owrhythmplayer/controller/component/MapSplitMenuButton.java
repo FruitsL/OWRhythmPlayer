@@ -3,23 +3,23 @@ package com.fruitcoding.owrhythmplayer.controller.component;
 import com.fruitcoding.owrhythmplayer.audio.AudioDevice;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitMenuButton;
-import lombok.Getter;
+import lombok.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Getter
-public class SpeakerSplitMenuButton extends SplitMenuButton {
+public class MapSplitMenuButton extends SplitMenuButton {
+    private Map<?, ?> map = null;
     private int index = -1;
 
-    public SpeakerSplitMenuButton() {
-        super();
-        AudioDevice.getInstance().getTargetMixerInfos().stream()
-                .map(mixerInfo -> new MenuItem(mixerInfo.getName()))
-                .peek(this::setupMenuItem)
-                .forEach(this.getItems()::add);
-    }
-
-    public SpeakerSplitMenuButton(int index) {
-        this();
-        setIndex(index);
+    public void setMap(Map<?, ?> map) {
+        this.map = map;
+        map.keySet().forEach(k -> {
+            this.getItems().add(new MenuItem((String) k));
+        });
     }
 
     /**
@@ -28,7 +28,7 @@ public class SpeakerSplitMenuButton extends SplitMenuButton {
      * @param item 선택된 아이템
      */
     private void setupMenuItem(MenuItem item) {
-        item.setOnAction(actionEvent -> {
+        item.setOnAction(_ -> {
             setIndex(getItems().indexOf(item));
         });
     }
@@ -45,4 +45,10 @@ public class SpeakerSplitMenuButton extends SplitMenuButton {
         } catch(Exception _) {}
     }
 
+    public void setList(List<String> list) {
+        list.stream().map(MenuItem::new)
+                .peek(this::setupMenuItem)
+                .forEach(this.getItems()::add);
+        map = list.stream().collect(Collectors.toMap(s -> s, s -> s, (existing, replacement) -> existing));
+    }
 }

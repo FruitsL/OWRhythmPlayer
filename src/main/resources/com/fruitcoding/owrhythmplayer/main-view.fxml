@@ -6,8 +6,10 @@
 <?import javafx.scene.text.*?>
 
 <?import org.kordamp.ikonli.javafx.FontIcon?>
-<?import com.fruitcoding.owrhythmplayer.controller.component.SpeakerSplitMenuButton?>
+<?import com.fruitcoding.owrhythmplayer.controller.component.MapSplitMenuButton?>
 <?import com.fruitcoding.owrhythmplayer.controller.component.NumericTextField?>
+<?import com.fruitcoding.owrhythmplayer.controller.component.TooltipSlider?>
+<?import com.fruitcoding.owrhythmplayer.controller.component.MapSplitMenuButton?>
 <VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.fruitcoding.owrhythmplayer.controller.MainController">
    <children>
       <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
@@ -53,60 +55,56 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="이 곳에 음악 파일을 드래그 앤 드랍하세요." textAlignment="CENTER" GridPane.columnSpan="4">
+                  <Label fx:id="songTitleLabel" alignment="CENTER" maxWidth="1.7976931348623157E308" text="이 곳으로 음악 파일을 옮기세요." textAlignment="CENTER" GridPane.columnSpan="4">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label contentDisplay="TOP" text="채보 파일" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
+                  <Label contentDisplay="TOP" text="음악 파일" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
-                  <SplitMenuButton maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="None" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
-                    <items>
-                      <MenuItem mnemonicParsing="false" text="Action 1" />
-                      <MenuItem mnemonicParsing="false" text="Action 2" />
-                    </items>
-                  </SplitMenuButton>
+                  <MapSplitMenuButton fx:id="musicSplitMenuButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="None" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
+                  </MapSplitMenuButton>
                   <Label text="재생 장치" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
-                  <SpeakerSplitMenuButton fx:id="speakerSplitMenuButton1" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="None" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2"/>
+                  <MapSplitMenuButton fx:id="speakerSplitMenuButton1" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="None" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="2"/>
                   <Label text="음량" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
-                  <Slider maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <TooltipSlider fx:id="speakerSlider1" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <Label text="시작 딜레이 (ms)" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
-                  <TextField GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                  <NumericTextField fx:id="speakerDelayTextField1" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                   <Label text="재생 장치" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="4">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
-                  <SpeakerSplitMenuButton fx:id="speakerSplitMenuButton2" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="None" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4"/>
+                  <MapSplitMenuButton fx:id="speakerSplitMenuButton2" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="None" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="4"/>
                   <Label text="음량" textAlignment="RIGHT" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
-                  <Slider maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <TooltipSlider fx:id="speakerSlider2" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets />
-                     </GridPane.margin></Slider>
+                     </GridPane.margin></TooltipSlider>
                   <Label text="시작 딜레이 (ms)" textAlignment="RIGHT" GridPane.columnIndex="2" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
                   <NumericTextField fx:id="speakerDelayTextField2" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-                  <Button alignment="CENTER" mnemonicParsing="false" text="재생" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
+                  <Button onAction="#play" alignment="CENTER" mnemonicParsing="false" text="재생" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="6">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button alignment="CENTER" mnemonicParsing="false" text="일시정지" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                  <Button onAction="#stop" alignment="CENTER" mnemonicParsing="false" text="일시정지" GridPane.columnIndex="2" GridPane.rowIndex="6">
                      <GridPane.margin>
                         <Insets left="10.0" />
                      </GridPane.margin></Button>

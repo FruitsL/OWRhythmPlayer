@@ -32,13 +32,14 @@ public class AudioPlayer {
         audioClip.open(ais);
     }
 
-    public void play(long delay) {
+    public void play(long delay, float volume) {
         long time = System.nanoTime();
         delay *= 1_000_000;
         if(audioClip != null && !audioClip.isRunning()) {
+            setVolume(volume);
             while(System.nanoTime() - time < delay); // 정확한 실행을 위한 반복 (1ms 미만 오차)
             audioClip.start();
-            info("Play time: " + (System.nanoTime() - time));
+            info(STR."Play time: \{System.nanoTime() - time}");
         } else {
             error("Not Playing");
         }
@@ -60,5 +61,12 @@ public class AudioPlayer {
         scheduler.shutdown();
         if(audioClip != null)
             audioClip.close();
+    }
+
+    private void setVolume(float volume) {
+        FloatControl gainControl = (FloatControl)audioClip.getControl(FloatControl.Type.MASTER_GAIN);
+        float dB = (float)(Math.log(volume / 100.0) / Math.log(10.0) * 20.0);
+        dB = Math.max(dB, gainControl.getMinimum());
+        gainControl.setValue(dB);
     }
 }
