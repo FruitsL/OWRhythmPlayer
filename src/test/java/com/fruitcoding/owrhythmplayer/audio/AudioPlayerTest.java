@@ -16,14 +16,9 @@ import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 class AudioPlayerTest {
     /**
      * 2개의 재생 장치에 음악 재생 테스트
-     *
-     * @throws UnsupportedAudioFileException
-     * @throws LineUnavailableException
-     * @throws IOException
-     * @throws InterruptedException
      */
     @Test
-    void startMusic() throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
+    void startMusic() throws Exception {
         CountDownLatch latch = new CountDownLatch(1); // Test 종료 전 스케쥴 강제종료 방지
 
         File file = AudioFileConverter.getInstance().getWavFile();
@@ -34,22 +29,17 @@ class AudioPlayerTest {
 
         AudioPlayer player1 = new AudioPlayer(outputs.get(1), file);
         AudioPlayer player2 = new AudioPlayer(outputs.get(3), file);
-        player1.play(1000L);
-        player2.play(3000L);
+        player1.play(1000L, 100.0f);
+        player2.play(3000L, 100.0f);
 
         latch.await(15, TimeUnit.SECONDS); // n초 후 테스트 종료
     }
 
     /**
      * 음악 재생 이후 중지
-     *
-     * @throws UnsupportedAudioFileException
-     * @throws LineUnavailableException
-     * @throws IOException
-     * @throws InterruptedException
      */
     @Test
-    void stopMusic() throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
+    void stopMusic() throws Exception {
         CountDownLatch latch = new CountDownLatch(1); // Test 종료 전 스케쥴 강제종료 방지
 
         File file = AudioFileConverter.getInstance().getWavFile();
@@ -59,7 +49,7 @@ class AudioPlayerTest {
         outputs.forEach(i -> info(i.getName()));
 
         AudioPlayer player1 = new AudioPlayer(outputs.get(1), file);
-        player1.play(1000L);
+        player1.play(1000L, 100.0f);
 
         Thread.sleep(7000L);
         player1.stop(); // n초 후 중지
@@ -69,14 +59,9 @@ class AudioPlayerTest {
 
     /**
      * 음악 재생 후 일시 중지한 뒤 다시 재생
-     *
-     * @throws UnsupportedAudioFileException
-     * @throws LineUnavailableException
-     * @throws IOException
-     * @throws InterruptedException
      */
     @Test
-    void pauseMusic() throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
+    void pauseMusic() throws Exception {
         CountDownLatch latch = new CountDownLatch(1); // Test 종료 전 스케쥴 강제종료 방지
 
         File file = AudioFileConverter.getInstance().getWavFile();
@@ -86,13 +71,13 @@ class AudioPlayerTest {
         outputs.forEach(i -> info(i.getName()));
 
         AudioPlayer player1 = new AudioPlayer(outputs.get(1), file);
-        player1.play(1000L);
+        player1.play(1000L, 100.0f);
 
         Thread.sleep(7000L);
         player1.pause(); // n초 후 일시중지
 
         Thread.sleep(3000L);
-        player1.play(0L); // n초 후 재생
+        player1.play(0L, 100.0f); // n초 후 재생
 
         latch.await(15, TimeUnit.SECONDS); // n초 후 테스트 종료
     }
