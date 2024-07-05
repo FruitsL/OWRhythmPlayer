@@ -16,14 +16,9 @@ import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 class AudioPlayerTest {
     /**
      * 2개의 재생 장치에 음악 재생 테스트
-     *
-     * @throws UnsupportedAudioFileException
-     * @throws LineUnavailableException
-     * @throws IOException
-     * @throws InterruptedException
      */
     @Test
-    void startMusic() throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
+    void startMusic() throws Exception {
         CountDownLatch latch = new CountDownLatch(1); // Test 종료 전 스케쥴 강제종료 방지
 
         File file = AudioFileConverter.getInstance().getWavFile();
@@ -42,14 +37,9 @@ class AudioPlayerTest {
 
     /**
      * 음악 재생 이후 중지
-     *
-     * @throws UnsupportedAudioFileException
-     * @throws LineUnavailableException
-     * @throws IOException
-     * @throws InterruptedException
      */
     @Test
-    void stopMusic() throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
+    void stopMusic() throws Exception {
         CountDownLatch latch = new CountDownLatch(1); // Test 종료 전 스케쥴 강제종료 방지
 
         File file = AudioFileConverter.getInstance().getWavFile();
@@ -69,14 +59,9 @@ class AudioPlayerTest {
 
     /**
      * 음악 재생 후 일시 중지한 뒤 다시 재생
-     *
-     * @throws UnsupportedAudioFileException
-     * @throws LineUnavailableException
-     * @throws IOException
-     * @throws InterruptedException
      */
     @Test
-    void pauseMusic() throws UnsupportedAudioFileException, LineUnavailableException, IOException, InterruptedException {
+    void pauseMusic() throws Exception {
         CountDownLatch latch = new CountDownLatch(1); // Test 종료 전 스케쥴 강제종료 방지
 
         File file = AudioFileConverter.getInstance().getWavFile();
