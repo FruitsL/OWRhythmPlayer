@@ -14,7 +14,7 @@ import java.io.File;
 public class AudioFileConverter {
     private static volatile AudioFileConverter instance;
 
-    private File wavFile = new File(System.getProperty("user.dir") + "/data/music.wav");
+    private File wavFile = new File(STR."\{System.getProperty("user.dir")}/data/music.wav");
 
     /**
      * 인스턴스를 반환하는 정적 메서드

@@ -9,7 +9,9 @@ import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 class OsuFileTest {
     @Test
     public void readContent() throws IOException {
-        OsuFile oszFile = new OsuFile(System.getProperty("user.dir") + "/test.osu");
+        OsuFile oszFile = OsuFile.builder()
+                .filePath(System.getProperty("user.dir") + "/1934192 Kaneko Chiharu - INF-B _L-aste-R_/Kaneko Chiharu - INF-B L-aste-R (ML-ysg) [NOVICE].osu")
+                .build();
 
         info("=== getTimingPoints() ===");
         for(String s : oszFile.getTimingPoints()){

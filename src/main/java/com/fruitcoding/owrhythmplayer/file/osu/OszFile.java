@@ -19,7 +19,7 @@ import java.util.zip.ZipInputStream;
 public class OszFile {
     private File file = null;
     private Map<String, Map<String, File>> fileMap = null;
-    private String tempDirectoryPath = System.getProperty("user.dir") + "/temp";
+    private String tempDirectoryPath = System.getProperty("user.dir") + "/data/temp";
 
     public static class NotAZipFileException extends Exception {
         public NotAZipFileException(String message) {

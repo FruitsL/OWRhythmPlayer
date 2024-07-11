@@ -38,7 +38,7 @@ public class AudioPlayer {
         if(audioClip != null && !audioClip.isRunning()) {
             while(System.nanoTime() - time < delay); // 정확한 실행을 위한 반복 (1ms 미만 오차)
             audioClip.start();
-            info("Play time: " + (System.nanoTime() - time));
+            info(STR."Play time: \{System.nanoTime() - time}");
         } else {
             error("Not Playing");
         }

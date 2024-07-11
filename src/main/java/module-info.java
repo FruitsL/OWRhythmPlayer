@@ -11,6 +11,9 @@ module com.fruitcoding.owrhythmplayer {
     requires static lombok;
     requires jave;
     requires org.apache.logging.log4j;
+    requires jnativehook;
+    requires java.logging;
+    requires com.fasterxml.jackson.databind;
 
     opens com.fruitcoding.owrhythmplayer to javafx.fxml;
     exports com.fruitcoding.owrhythmplayer;
