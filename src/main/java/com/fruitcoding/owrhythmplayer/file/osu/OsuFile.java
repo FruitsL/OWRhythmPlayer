@@ -1,6 +1,7 @@
 package com.fruitcoding.owrhythmplayer.file.osu;
 
 import com.fruitcoding.owrhythmplayer.file.base.MapFile;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,21 +19,22 @@ public class OsuFile extends MapFile {
     private String audioFileName = null;
     private int circleSize = 4;
 
-    public OsuFile(File file) throws IOException {
+    @Builder
+    public OsuFile(String filePath, File file) throws IOException {
         super();
-        setFile(file);
-        readFile();
-    }
-    public OsuFile(String filePath) throws IOException {
-        super();
-        setFilePath(filePath);
+        if (filePath.isBlank()) {
+            setFile(file);
+        } else {
+            setFilePath(filePath);
+        }
         readFile();
     }
 
     private void readFile() throws IOException {
         try(BufferedReader br = new BufferedReader(new FileReader(getFile()))) {
             audioFileName = getContent(br, "AudioFilename:");
-            circleSize = Integer.parseInt(getContent(br, "CircleSize:"));
+            circleSize = Integer.parseInt(getContent(br, "CircleSize:")
+                    .replace("CircleSize:", "").trim());
             timingPoints = getContents(br, "[TimingPoints]");
             hitObjects = getContents(br, "[HitObjects]");
         }
@@ -54,7 +56,6 @@ public class OsuFile extends MapFile {
     }
 
     private String getContent(BufferedReader br, String content) throws IOException {
-        List<String> contents = new ArrayList<>();
         String line;
 
         while(!(line = br.readLine()).contains(content));
