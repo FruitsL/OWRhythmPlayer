@@ -25,25 +25,6 @@ public class MainApplication extends Application {
         stage.setTitle("Overwatch Rhythm Player");
         stage.setScene(scene);
         stage.show();
-
-        new GlobalKeyMouseListener();
-
-        new Panel().addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                info(STR."KeyListener: \{e}");
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                info(STR."keyPressed: \{e}");
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-                info(STR."keyReleased: \{e}");
-            }
-        });
     }
 
     @Override
