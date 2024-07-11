@@ -18,4 +18,7 @@ module com.fruitcoding.owrhythmplayer {
     opens com.fruitcoding.owrhythmplayer to javafx.fxml;
     exports com.fruitcoding.owrhythmplayer;
     exports com.fruitcoding.owrhythmplayer.audio;
+    exports com.fruitcoding.owrhythmplayer.controller;
+    exports com.fruitcoding.owrhythmplayer.controller.component;
+    opens com.fruitcoding.owrhythmplayer.controller to javafx.fxml;
 }
