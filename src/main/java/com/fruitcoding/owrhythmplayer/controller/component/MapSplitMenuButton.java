@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.error;
+import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
+
 @Getter
 public class MapSplitMenuButton extends SplitMenuButton {
     private Map<?, ?> map = null;
@@ -18,7 +21,9 @@ public class MapSplitMenuButton extends SplitMenuButton {
     public void setMap(Map<?, ?> map) {
         this.map = map;
         map.keySet().forEach(k -> {
-            this.getItems().add(new MenuItem((String) k));
+            MenuItem item = new MenuItem((String) k);
+            this.getItems().add(item);
+            setupMenuItem(item);
         });
     }
 
@@ -42,7 +47,9 @@ public class MapSplitMenuButton extends SplitMenuButton {
         try {
             this.setText(this.getItems().get(index).getText());
             this.index = index;
-        } catch(Exception _) {}
+        } catch(Exception e) {
+            error(e);
+        }
     }
 
     public void setList(List<String> list) {

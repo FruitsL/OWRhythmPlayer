@@ -31,8 +31,6 @@ import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 
 public class MainController {
     @FXML
-    private Label songTitleLabel;
-    @FXML
     private MapSplitMenuButton musicSplitMenuButton;
     @FXML
     private MapSplitMenuButton speakerSplitMenuButton1;
@@ -58,16 +56,22 @@ public class MainController {
         speakerSlider1.setValue(100.0);
         speakerSlider2.setValue(100.0);
 
-        songTitleLabel.sceneProperty().addListener((_, _, newScene) -> {
+        musicSplitMenuButton.sceneProperty().addListener((_, _, newScene) -> {
             if (newScene != null) {
                 newScene.setOnDragEntered(this::handleDragDropped);
             }
         });
 
-        speakerSplitMenuButton1.setMap(AudioDevice.getInstance().getSourceMixerInfos().stream()
-                .collect(Collectors.toMap(Mixer.Info::getName, info -> info, (existing, replacement) -> existing)));
-        speakerSplitMenuButton2.setMap(AudioDevice.getInstance().getSourceMixerInfos().stream()
-                .collect(Collectors.toMap(Mixer.Info::getName, info -> info, (existing, replacement) -> existing)));
+        speakerSplitMenuButton1.setList(
+                AudioDevice.getInstance().getSourceMixerInfos().stream()
+                        .map(Mixer.Info::getName)
+                        .collect(Collectors.toList())
+        );
+        speakerSplitMenuButton2.setList(
+                AudioDevice.getInstance().getSourceMixerInfos().stream()
+                        .map(Mixer.Info::getName)
+                        .collect(Collectors.toList())
+        );
     }
 
     private void handleDragDropped(DragEvent event) {

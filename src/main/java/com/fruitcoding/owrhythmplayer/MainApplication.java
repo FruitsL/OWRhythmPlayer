@@ -30,7 +30,8 @@ public class MainApplication extends Application {
     @Override
     public void stop() {
         try {
-            GlobalScreen.unregisterNativeHook();
+            if(GlobalScreen.isNativeHookRegistered())
+                GlobalScreen.unregisterNativeHook();
             info("GlobalHooker Closed");
         } catch (NativeHookException e) {
             error("GlobalHooker Closed Error");
