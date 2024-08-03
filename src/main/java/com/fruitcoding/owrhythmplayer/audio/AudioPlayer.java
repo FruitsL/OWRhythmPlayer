@@ -45,6 +45,10 @@ public class AudioPlayer {
         }
     }
 
+    public boolean isPlaying() {
+        return audioClip.isRunning();
+    }
+
     public void pause() {
         if(audioClip != null && audioClip.isRunning())
             audioClip.stop();

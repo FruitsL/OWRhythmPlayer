@@ -8,6 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.File;
+import java.io.IOException;
+
+import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 
 @Getter
 @Setter
@@ -39,11 +42,25 @@ public class AudioFileConverter {
      * @throws EncoderException wav로 변환 중 오류 발생 시
      */
     public void convertToWAV(String filePath) throws EncoderException {
-        EncodingAttributes attrs = new EncodingAttributes();
-        attrs.setFormat("wav");
-        attrs.setAudioAttributes(new AudioAttributes());
-
-        Encoder encoder = new Encoder();
-        encoder.encode(new File(filePath), wavFile, attrs);
+        info(STR."Source : \{filePath}, Target : \{wavFile.getAbsolutePath()}");
+        ProcessBuilder builder;
+        if(System.getProperty("os.name").toLowerCase().contains("window")) {
+            builder = new ProcessBuilder(STR."\{System.getProperty("user.dir")}/data/ffmpeg.exe", "-y", "-i", filePath, wavFile.getAbsolutePath());
+        } else {
+            builder = new ProcessBuilder("ffmpeg", "-y", "-i", filePath, wavFile.getAbsolutePath());
+        }
+        Process process = null;
+        int exitCode;
+        try {
+            process = builder.start();
+            exitCode = process.waitFor();
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        if (exitCode == 0) {
+            System.out.println("Conversion successful");
+        } else {
+            System.out.println(STR."Conversion failed (exitCode : \{exitCode})");
+        }
     }
 }

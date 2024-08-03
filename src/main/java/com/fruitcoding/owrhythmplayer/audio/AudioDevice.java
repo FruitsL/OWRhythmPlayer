@@ -5,6 +5,7 @@ import lombok.Getter;
 import javax.sound.sampled.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.fruitcoding.owrhythmplayer.util.LambdaExceptionUtil.rethrowPredicate;
@@ -37,6 +38,12 @@ public class AudioDevice {
         setTargetMixerInfos();
     }
 
+    public List<String> getSourceMixerInfosNameList() {
+        return getSourceMixerInfos().stream()
+                .map(Mixer.Info::getName)
+                .collect(Collectors.toList());
+    }
+
     /**
      * sourceMixerInfos @Setter
      */
@@ -48,6 +55,12 @@ public class AudioDevice {
                         .map(_ -> mixer.getMixerInfo()))
                 .distinct()
                 .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    public List<String> getTargetMixerInfosNameList() {
+        return getTargetMixerInfos().stream()
+                .map(Mixer.Info::getName)
+                .collect(Collectors.toList());
     }
 
     /**

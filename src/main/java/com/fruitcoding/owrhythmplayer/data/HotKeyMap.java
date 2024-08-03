@@ -45,25 +45,4 @@ public class HotKeyMap extends JSONMap<Integer, String> {
     public Map<Integer, String> getMap() {
         return super.getMap();
     }
-
-    /*
-    * file에서 json 읽어서 map으로 만들기
-    *
-    * String과 int받아서 value 변경
-    *
-    * map을 json으로 변경하여 파일에 저장
-    * */
-
-//    (),
-//    (),
-//    (),
-//    (),
-//    (),
-//    (),
-//    (),
-//    (),
-//    (),
-//    (),
-//    PLAY(KeyEvent.VK_F11),
-//    STOP(KeyEvent.VK_F12);
 }

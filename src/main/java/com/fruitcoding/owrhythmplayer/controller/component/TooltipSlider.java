@@ -3,9 +3,11 @@ package com.fruitcoding.owrhythmplayer.controller.component;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
+import lombok.Getter;
 
 public class TooltipSlider extends Slider {
     private final Tooltip tooltip;
+
     public TooltipSlider() {
         tooltip = new Tooltip();
         tooltip.setAutoHide(false);

@@ -14,6 +14,8 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
+
 @Setter
 @Getter
 public class OszFile {
@@ -85,6 +87,12 @@ public class OszFile {
                 }
             }
 
+            fileMap.forEach((k, v) -> {
+                info(STR."extension : \{k}");
+                v.forEach((k1, v1) -> {
+                    info(STR."- \{k1} (Path : \{v1}})");
+                });
+            });
         }
     }
 
@@ -106,7 +114,7 @@ public class OszFile {
      * @param path 삭제할 경로
      * @throws IOException
      */
-    private void clearDirectory(Path path) throws IOException {
+    public void clearDirectory(Path path) throws IOException {
         Files.walk(path)
                 .sorted(Comparator.reverseOrder())
                 .map(Path::toFile)
