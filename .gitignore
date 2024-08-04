@@ -63,3 +63,5 @@ build/
 ### Mac OS ###
 .DS_Store
 >>>>>>> ca25f36 (다른 PC에서 작업하기 위해 레포 생성)
+
+*.exe
