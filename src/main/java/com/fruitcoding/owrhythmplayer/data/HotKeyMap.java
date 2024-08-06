@@ -9,12 +9,19 @@ import java.util.Map;
 import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 
 public class HotKeyMap extends JSONMap<Integer, String> {
+    private static HotKeyMap instance;
     @Override
     String getFilePath() {
         return STR."\{System.getProperty("user.dir")}/data/save/hotkey.json";
     }
 
-    public HotKeyMap() throws IOException {
+    public static synchronized HotKeyMap getInstance() throws IOException {
+        if(instance == null)
+            instance = new HotKeyMap();
+        return instance;
+    }
+
+    private HotKeyMap() throws IOException {
         try {
             jsonToMap(Integer.class, String.class);
             if(super.map.isEmpty())

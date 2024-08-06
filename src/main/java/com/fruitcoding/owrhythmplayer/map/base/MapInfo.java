@@ -9,7 +9,9 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 abstract public class MapInfo {
+    @Getter
     public Queue<NoteInfo> noteInfos = new LinkedList<NoteInfo>();
+    @Getter
     public Queue<BPMInfo> bpmInfos = new LinkedList<BPMInfo>();
 
     Robot robot = null;
@@ -39,9 +41,9 @@ abstract public class MapInfo {
 
             while(noteInfo.nanoTime() < System.nanoTime() - initTime);
             if (noteInfo.isPress()) {
-                robot.keyPress(noteInfo.button());
+                robot.keyPress(noteInfo.keyCode());
             } else {
-                robot.keyRelease(noteInfo.button());
+                robot.keyRelease(noteInfo.keyCode());
             }
         }
     }

@@ -23,7 +23,7 @@ import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.*;
 
 public class GlobalKeyMouseListener extends SwingKeyAdapter {
     @Getter
-    private HotKeyMap hotKeyMap = new HotKeyMap();
+    private HotKeyMap hotKeyMap = HotKeyMap.getInstance();
     private final Map<Integer, Boolean> keyPressedMap = resetKeyPressedMap();
     Map<Integer, Integer> mouseConvertMap = Map.of(
             0, 0, // None
