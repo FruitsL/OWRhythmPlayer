@@ -1,7 +1,6 @@
 package com.fruitcoding.owrhythmplayer.map.osu;
 
 import com.fruitcoding.owrhythmplayer.data.HotKeyMap;
-import com.fruitcoding.owrhythmplayer.data.LineMap;
 import com.fruitcoding.owrhythmplayer.map.base.BPMInfo;
 import com.fruitcoding.owrhythmplayer.map.base.MapInfo;
 import com.fruitcoding.owrhythmplayer.map.base.NoteInfo;
@@ -20,7 +19,12 @@ public class OsuMapInfo extends MapInfo {
     @Setter
     private int circleSize = 0;
 
-    private LineMap lineMap = LineMap.getInstance();
+    Map<Integer, String> lineMap = Map.of(
+            0, "ABILITY_1",
+            1, "CROUCH",
+            2, "JUMP",
+            3, "MELEE"
+    );
     Map<String, Integer> hotkeyMap;
     /**
      * 로봇 생성
@@ -41,11 +45,11 @@ public class OsuMapInfo extends MapInfo {
         String[] infos = info.toString().split(",");
         String[] additionInfos = infos[5].split(":");
 
-        noteInfos.add( new NoteInfo(Long.parseLong(infos[2]) * 1_000_000, true, hotkeyMap.get(lineMap.getMap().get(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2))) ); // 현재는 라인 위치를 keyCode로 넣었지만 추후엔 라인 위치 기준 KeyCode로 변경해야함
+        noteInfos.add( new NoteInfo(Long.parseLong(infos[2]) * 1_000_000, true, hotkeyMap.get(lineMap.get(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2))) ); // 현재는 라인 위치를 keyCode로 넣었지만 추후엔 라인 위치 기준 KeyCode로 변경해야함
         if(Integer.parseInt(additionInfos[0]) > 1) {
-            noteInfos.add( new NoteInfo((Long.parseLong(infos[2]) + Integer.parseInt(additionInfos[0])) * 1_000_000, false, hotkeyMap.get(lineMap.getMap().get(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2))) );
+            noteInfos.add( new NoteInfo((Long.parseLong(infos[2]) + Integer.parseInt(additionInfos[0])) * 1_000_000, false, hotkeyMap.get(lineMap.get(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2))) );
         } else {
-            noteInfos.add( new NoteInfo(Long.parseLong(infos[2]) * 1_000_000, false, hotkeyMap.get(lineMap.getMap().get(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2))) );
+            noteInfos.add( new NoteInfo(Long.parseLong(infos[2]) * 1_000_000, false, hotkeyMap.get(lineMap.get(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2))) );
         }
     }
 
