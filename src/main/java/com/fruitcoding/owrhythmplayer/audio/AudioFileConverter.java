@@ -7,9 +7,9 @@ import it.sauronsoftware.jave.EncodingAttributes;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 
+import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.error;
 import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 
 @Getter
@@ -45,22 +45,38 @@ public class AudioFileConverter {
         info(STR."Source : \{filePath}, Target : \{wavFile.getAbsolutePath()}");
         ProcessBuilder builder;
         if(System.getProperty("os.name").toLowerCase().contains("window")) {
-            builder = new ProcessBuilder(STR."\{System.getProperty("user.dir")}/data/ffmpeg.exe", "-y", "-i", filePath, wavFile.getAbsolutePath());
+            builder = new ProcessBuilder("./data/ffmpeg", "-y", "-loglevel", "error", "-i", filePath, wavFile.getAbsolutePath());
         } else {
-            builder = new ProcessBuilder("ffmpeg", "-y", "-i", filePath, wavFile.getAbsolutePath());
+            builder = new ProcessBuilder("ffmpeg", "-y", "-loglevel", "error", "-i", filePath, wavFile.getAbsolutePath());
         }
         Process process = null;
         int exitCode;
         try {
             process = builder.start();
+            errorStream(process);
+
             exitCode = process.waitFor();
-        } catch (IOException | InterruptedException e) {
+        } catch (Exception e) {
+            error(STR."Conversion failed: \{e}");
             throw new RuntimeException(e);
         }
         if (exitCode == 0) {
-            System.out.println("Conversion successful");
+            info("Conversion successful");
         } else {
-            System.out.println(STR."Conversion failed (exitCode : \{exitCode})");
+            error(STR."Conversion failed (exitCode : \{exitCode})");
         }
+    }
+
+    private void errorStream(Process process) {
+        new Thread(() -> {
+            try(BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+                String line;
+                while((line = br.readLine()) != null) {
+                    info(line);
+                }
+            } catch (Exception e) {
+                error(e);
+            }
+        }).start();
     }
 }

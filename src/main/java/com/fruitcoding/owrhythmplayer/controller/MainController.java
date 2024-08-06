@@ -8,9 +8,12 @@ import com.fruitcoding.owrhythmplayer.controller.component.MapSplitMenuButton;
 import com.fruitcoding.owrhythmplayer.controller.component.NumericTextField;
 import com.fruitcoding.owrhythmplayer.controller.component.TooltipSlider;
 import com.fruitcoding.owrhythmplayer.data.MainMap;
+import com.fruitcoding.owrhythmplayer.data.PlaybackStatus;
 import com.fruitcoding.owrhythmplayer.file.osu.OszFile;
+import com.fruitcoding.owrhythmplayer.util.GlobalKeyMouseListener;
 import com.fruitcoding.owrhythmplayer.util.LoggerUtil;
 import it.sauronsoftware.jave.EncoderException;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -21,10 +24,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.VBox;
 import lombok.Getter;
+import org.jnativehook.NativeHookException;
 
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.Mixer;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -58,10 +60,11 @@ public class MainController {
     AudioPlayer player1;
     AudioPlayer player2;
     AudioDevice audioDevice;
+    GlobalKeyMouseListener globalKeyMouseListener;
 
     @Getter
     private MainMap mainMap;
-    private boolean isPlaying;
+    private PlaybackStatus playbackStatus;
 
     @FXML
     public void initialize() throws IOException {
@@ -95,6 +98,13 @@ public class MainController {
         if(audioDevice.getSourceMixerInfosNameList().contains(mainMap.getMap().get("speakerSplitMenuButton2"))) {
             speakerSplitMenuButton2.setText(mainMap.getMap().get("speakerSplitMenuButton2"));
             speakerSplitMenuButton2.setIndex(audioDevice.getSourceMixerInfosNameList().indexOf(mainMap.getMap().get("speakerSplitMenuButton2")));
+        }
+
+        try {
+            globalKeyMouseListener = new GlobalKeyMouseListener(this);
+        } catch (NativeHookException e) {
+            error(STR."GlobalKeyMouseListener not working.\n\{e}");
+            throw new RuntimeException(e);
         }
     }
 
@@ -144,22 +154,28 @@ public class MainController {
     }
 
     @FXML
-    private void play() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
-        if(isPlaying) {
+    public void play() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+        if(playbackStatus == PlaybackStatus.PLAYING) {
             stop();
-            isPlaying = false;
+            playbackStatus = PlaybackStatus.STOPPED;
         } else if(musicSplitMenuButton.getMap() != null) {
             File wavFile = AudioFileConverter.getInstance().getWavFile();
+            Platform.runLater(() -> playButton.setText("중지")); // 다른 스레드에서도 동작시킬 수 있음
 
-            if(player1 != null)
-                player1.stop();
-            player1 = playing(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
-            if(player2 != null)
-                player2.stop();
-            player2 = playing(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
-            isPlaying = true;
-
-            playButton.setText("중지");
+            if(playbackStatus == PlaybackStatus.PAUSED) {
+                if(player1 != null)
+                    player1.play(1_000, (float)speakerSlider1.getValue());
+                if(player2 != null)
+                    player2.play(1_000, (float)speakerSlider2.getValue());
+            } else {
+                if(player1 != null)
+                    player1.stop();
+                if(player2 != null)
+                    player2.stop();
+                player1 = playing(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
+                player2 = playing(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
+            }
+            playbackStatus = PlaybackStatus.PLAYING;
         }
     }
 
@@ -168,26 +184,44 @@ public class MainController {
         if (index >= 0) {
             newAudioPlayer = new AudioPlayer(audioDevice.getSourceMixerInfos().get(index), wavFile);
             newAudioPlayer.play(delay, volume);
+            newAudioPlayer.getAudioClip().addLineListener(new LineListener() {
+                @Override
+                public void update(LineEvent event) { // 중지 시 재생 버튼 텍스트 변경
+                    if(event.getType() == LineEvent.Type.STOP) {
+                        if(!(player1.isPlaying() || player2.isPlaying())) {
+                            Platform.runLater(() -> {
+                                playButton.setText("재생");
+                            });
+                        }
+                    }
+                }
+            });
             return newAudioPlayer;
         }
         return null;
     }
 
-    private void stop() {
+    public void stop() {
         if(player1 != null)
             player1.stop();
         if(player2 != null)
             player2.stop();
-
-        playButton.setText("재생");
     }
 
     @FXML
-    private void pause() {
-        if(player1 != null)
-            player1.pause();
-        if(player2 != null)
-            player2.pause();
-        isPlaying = false;
+    public void pause() {
+        if(playbackStatus == PlaybackStatus.PLAYING) {
+            if (player1 != null)
+                player1.pause();
+            if (player2 != null)
+                player2.pause();
+            playbackStatus = PlaybackStatus.PAUSED;
+        } else {
+            if(player1 != null)
+                player1.play(1_000, (float)speakerSlider1.getValue());
+            if(player2 != null)
+                player2.play(1_000, (float)speakerSlider2.getValue());
+            playbackStatus = PlaybackStatus.PLAYING;
+        }
     }
 }

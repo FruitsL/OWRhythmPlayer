@@ -20,8 +20,8 @@ public abstract class JSONMap<K, V> {
         mapper.writeValue(new File(getFilePath()), map);
     }
 
-    public void jsonToMap() throws IOException {
-        map = mapper.readValue(new File(getFilePath()), mapper.getTypeFactory().constructMapType(Map.class, Object.class, Object.class));
+    public void jsonToMap(Class<?> clazz1, Class<?> clazz2) throws IOException {
+        map = mapper.readValue(new File(getFilePath()), mapper.getTypeFactory().constructMapType(Map.class, clazz1, clazz2));
     }
 
     public void creatJSONFile() throws IOException {

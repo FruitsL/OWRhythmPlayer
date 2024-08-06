@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
+
 public class HotKeyMap extends JSONMap<Integer, String> {
     @Override
     String getFilePath() {
@@ -14,7 +16,7 @@ public class HotKeyMap extends JSONMap<Integer, String> {
 
     public HotKeyMap() throws IOException {
         try {
-            jsonToMap();
+            jsonToMap(Integer.class, String.class);
             if(super.map.isEmpty())
                 throw new IOException("file contents is empty!");
         } catch (IOException _) {

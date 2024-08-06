@@ -15,7 +15,7 @@ public class MainMap extends JSONMap<String, String> {
 
     public MainMap() throws IOException {
         try {
-            jsonToMap();
+            jsonToMap(String.class, String.class);
             if(super.map.isEmpty())
                 throw new IOException("file contents is empty!");
         } catch (IOException _) {
