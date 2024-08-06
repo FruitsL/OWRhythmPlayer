@@ -178,15 +178,12 @@ public class MainController {
         if (index >= 0) {
             newAudioPlayer = new AudioPlayer(audioDevice.getSourceMixerInfos().get(index), wavFile);
             newAudioPlayer.play(delay, volume);
-            newAudioPlayer.getAudioClip().addLineListener(new LineListener() {
-                @Override
-                public void update(LineEvent event) { // 중지 시 재생 버튼 텍스트 변경
-                    if(event.getType() == LineEvent.Type.STOP) {
-                        if(!(player1.isPlaying() || player2.isPlaying())) {
-                            Platform.runLater(() -> {
-                                playButton.setText("재생");
-                            });
-                        }
+            newAudioPlayer.getAudioClip().addLineListener(event -> { // 중지 시 재생 버튼 텍스트 변경
+                if(event.getType() == LineEvent.Type.STOP) {
+                    if(!(player1.isPlaying() || player2.isPlaying())) {
+                        Platform.runLater(() -> {
+                            playButton.setText("재생");
+                        });
                     }
                 }
             });
