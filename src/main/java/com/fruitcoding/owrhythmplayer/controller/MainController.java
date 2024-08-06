@@ -156,30 +156,24 @@ public class MainController {
     @FXML
     public void play() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         if(playbackStatus == PlaybackStatus.PLAYING) {
-            stop();
+            stopped();
             playbackStatus = PlaybackStatus.STOPPED;
         } else if(musicSplitMenuButton.getMap() != null) {
             File wavFile = AudioFileConverter.getInstance().getWavFile();
             Platform.runLater(() -> playButton.setText("중지")); // 다른 스레드에서도 동작시킬 수 있음
 
             if(playbackStatus == PlaybackStatus.PAUSED) {
-                if(player1 != null)
-                    player1.play(1_000, (float)speakerSlider1.getValue());
-                if(player2 != null)
-                    player2.play(1_000, (float)speakerSlider2.getValue());
+                playing(1_000, 1_000);
             } else {
-                if(player1 != null)
-                    player1.stop();
-                if(player2 != null)
-                    player2.stop();
-                player1 = playing(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
-                player2 = playing(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
+                stopped();
+                player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
+                player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
             }
             playbackStatus = PlaybackStatus.PLAYING;
         }
     }
 
-    private AudioPlayer playing(File wavFile, int index, long delay, float volume) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+    private AudioPlayer playerInit(File wavFile, int index, long delay, float volume) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         AudioPlayer newAudioPlayer;
         if (index >= 0) {
             newAudioPlayer = new AudioPlayer(audioDevice.getSourceMixerInfos().get(index), wavFile);
@@ -201,7 +195,14 @@ public class MainController {
         return null;
     }
 
-    public void stop() {
+    public void playing(long d1, long d2) {
+        if(player1 != null)
+            player1.play(d1, (float)speakerSlider1.getValue());
+        if(player2 != null)
+            player2.play(d2, (float)speakerSlider2.getValue());
+    }
+
+    public void stopped() {
         if(player1 != null)
             player1.stop();
         if(player2 != null)
@@ -217,10 +218,7 @@ public class MainController {
                 player2.pause();
             playbackStatus = PlaybackStatus.PAUSED;
         } else {
-            if(player1 != null)
-                player1.play(1_000, (float)speakerSlider1.getValue());
-            if(player2 != null)
-                player2.play(1_000, (float)speakerSlider2.getValue());
+            playing(1_000, 1_000);
             playbackStatus = PlaybackStatus.PLAYING;
         }
     }
