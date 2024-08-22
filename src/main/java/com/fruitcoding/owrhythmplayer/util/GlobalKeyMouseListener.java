@@ -13,6 +13,7 @@ import org.jnativehook.mouse.NativeMouseListener;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Map;
@@ -65,6 +66,8 @@ public class GlobalKeyMouseListener extends SwingKeyAdapter {
                             mainController.play();
                         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
                             error(STR."play error.\n\{e}");
+                        } catch (AWTException e) {
+                            throw new RuntimeException(e);
                         }
                         break;
                     case "STOP":

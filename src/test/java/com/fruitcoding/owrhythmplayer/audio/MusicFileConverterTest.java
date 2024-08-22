@@ -15,11 +15,7 @@ class MusicFileConverterTest {
         AudioFileConverter converter = AudioFileConverter.getInstance();
         info("user.dir: " + System.getProperty("user.dir"));
 
-        try {
-            converter.convertToWAV(System.getProperty("user.dir") + "/src/test/resources/test.mp3");
-        } catch (EncoderException e) {
-            throw new RuntimeException(e);
-        }
+        converter.convertToWAV(System.getProperty("user.dir") + "/src/test/resources/test.mp3");
         assertNotNull(converter.getWavFile());
     }
 }

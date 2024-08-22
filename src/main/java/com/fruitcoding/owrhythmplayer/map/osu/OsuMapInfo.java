@@ -25,7 +25,6 @@ public class OsuMapInfo extends MapInfo {
             2, "JUMP",
             3, "MELEE"
     );
-    Map<String, Integer> hotkeyMap;
     /**
      * 로봇 생성
      *
@@ -34,10 +33,6 @@ public class OsuMapInfo extends MapInfo {
     public OsuMapInfo(int circleSize) throws AWTException, IOException {
         super();
         this.circleSize = circleSize;
-        hotkeyMap = HotKeyMap.getInstance().getMap().entrySet().stream()
-                .collect(Collectors.toMap(
-                       Map.Entry::getValue, Map.Entry::getKey
-                ));
     }
 
     @Override

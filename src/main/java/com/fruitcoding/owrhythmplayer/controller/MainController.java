@@ -9,7 +9,9 @@ import com.fruitcoding.owrhythmplayer.controller.component.NumericTextField;
 import com.fruitcoding.owrhythmplayer.controller.component.TooltipSlider;
 import com.fruitcoding.owrhythmplayer.data.MainMap;
 import com.fruitcoding.owrhythmplayer.data.PlaybackStatus;
+import com.fruitcoding.owrhythmplayer.file.osu.OsuFile;
 import com.fruitcoding.owrhythmplayer.file.osu.OszFile;
+import com.fruitcoding.owrhythmplayer.map.osu.OsuMapInfo;
 import com.fruitcoding.owrhythmplayer.util.GlobalKeyMouseListener;
 import com.fruitcoding.owrhythmplayer.util.LoggerUtil;
 import it.sauronsoftware.jave.EncoderException;
@@ -18,6 +20,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
@@ -27,10 +30,13 @@ import lombok.Getter;
 import org.jnativehook.NativeHookException;
 
 import javax.sound.sampled.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -65,6 +71,9 @@ public class MainController {
     @Getter
     private MainMap mainMap;
     private PlaybackStatus playbackStatus;
+
+    OsuMapInfo osuMapInfo;
+    OsuFile osuFile;
 
     @FXML
     public void initialize() throws IOException {
@@ -127,6 +136,7 @@ public class MainController {
                 }
             }
 
+            musicSplitMenuButton.setIndex(-1);
             Map<String, String> musicFileMap = new HashMap<>();
             files.forEach(file -> {
                 String extension = file.getName().substring(file.getName().lastIndexOf('.'));
@@ -142,23 +152,31 @@ public class MainController {
                 }
             });
 
+            info(musicFileMap);
             musicSplitMenuButton.setMap(musicFileMap);
             musicSplitMenuButton.setIndex(0);
-            try {
-                AudioFileConverter.getInstance().convertToWAV(musicFileMap.get(files.getFirst().getName()));
-            } catch (EncoderException e) {
-                error("wav convert error");
-                throw new RuntimeException(e);
-            }
         }
     }
 
     @FXML
-    public void play() throws UnsupportedAudioFileException, LineUnavailableException, IOException {
+    public void play() throws UnsupportedAudioFileException, LineUnavailableException, IOException, AWTException {
         if(playbackStatus == PlaybackStatus.PLAYING) {
             stopped();
             playbackStatus = PlaybackStatus.STOPPED;
         } else if(musicSplitMenuButton.getMap() != null) {
+            /* osu 파일 설정 */
+            if(musicSplitMenuButton.getText().endsWith(".osu")) {
+                osuFile = OsuFile.builder()
+                        .filePath((String) musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()))
+                        .build();
+                osuMapInfo = new OsuMapInfo(osuFile.getCircleSize());
+                AudioFileConverter.getInstance().convertToWAV(STR."\{Paths.get(osuFile.getFile().getAbsolutePath()).getParent()}/\{osuFile.getAudioFileName()}");
+
+                osuMapInfo.inputBPM();
+            } else {
+                AudioFileConverter.getInstance().convertToWAV((String) musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()));
+            }
+
             File wavFile = AudioFileConverter.getInstance().getWavFile();
             Platform.runLater(() -> playButton.setText("중지")); // 다른 스레드에서도 동작시킬 수 있음
 
@@ -219,4 +237,6 @@ public class MainController {
             playbackStatus = PlaybackStatus.PLAYING;
         }
     }
+
+
 }

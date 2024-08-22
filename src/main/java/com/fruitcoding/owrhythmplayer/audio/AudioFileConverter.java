@@ -41,7 +41,7 @@ public class AudioFileConverter {
      * @param filePath wav로 변환할 오디오 파일 변경
      * @throws EncoderException wav로 변환 중 오류 발생 시
      */
-    public void convertToWAV(String filePath) throws EncoderException {
+    public void convertToWAV(String filePath) {
         info(STR."Source : \{filePath}, Target : \{wavFile.getAbsolutePath()}");
         ProcessBuilder builder;
         if(System.getProperty("os.name").toLowerCase().contains("window")) {

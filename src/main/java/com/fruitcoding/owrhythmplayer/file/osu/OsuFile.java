@@ -32,7 +32,7 @@ public class OsuFile extends MapFile {
 
     private void readFile() throws IOException {
         try(BufferedReader br = new BufferedReader(new FileReader(getFile()))) {
-            audioFileName = getContent(br, "AudioFilename:");
+            audioFileName = getContent(br, "AudioFilename:").replace("AudioFilename: ", "").trim();
             circleSize = Integer.parseInt(getContent(br, "CircleSize:")
                     .replace("CircleSize:", "").trim());
             timingPoints = getContents(br, "[TimingPoints]");

@@ -32,6 +32,9 @@ class OsuFileTest {
         info("=== AudioFilename: ===");
         info(oszFile.getAudioFileName());
 
+        info("=== BPM Queue ===");
+        osuMapInfo.inputBPM();
+
         info("=== Osu Map Info ===");
         info(STR."- bpmInfos: \{osuMapInfo.getBpmInfos().size()}");
         while(!osuMapInfo.getBpmInfos().isEmpty()) {
@@ -42,5 +45,6 @@ class OsuFileTest {
         while(!osuMapInfo.getNoteInfos().isEmpty()) {
             info(osuMapInfo.getNoteInfos().poll());
         }
+
     }
 }
