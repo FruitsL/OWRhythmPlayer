@@ -40,8 +40,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.error;
-import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
+import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.*;
 
 public class MainController {
     @FXML
@@ -61,20 +60,27 @@ public class MainController {
     @FXML
     private Button playButton;
     @FXML
-    private Button stopButton;
+    private Button stopButton; // TODO: 해당 변수 선언이 없어도 일시정지가 가능하다면 제거 예정
 
     AudioPlayer player1;
     AudioPlayer player2;
     AudioDevice audioDevice;
     GlobalKeyMouseListener globalKeyMouseListener;
 
+    public static long startTime = 0L;
+
     @Getter
     private MainMap mainMap;
+    private OsuFile osuFile;
+
     private PlaybackStatus playbackStatus;
 
     OsuMapInfo osuMapInfo;
-    OsuFile osuFile;
 
+    /**
+     * MainController 생성 시 init
+     * @throws IOException UI 오류 발생 시
+     */
     @FXML
     public void initialize() throws IOException {
         mainMap = new MainMap();
@@ -117,8 +123,11 @@ public class MainController {
         }
     }
 
+    /**
+     * 파일을 UI로 드래그 앤 드랍 시 동작할 메서드
+     * @param event 드래그 앤 드랍 시 생성되는 이벤트 (파일 목록 등)
+     */
     private void handleDragDropped(DragEvent event) {
-        info("dragdrooped");
         Dragboard db = event.getDragboard();
         if (db.hasFiles()) {
             List<File> files = db.getFiles();
@@ -139,7 +148,7 @@ public class MainController {
             musicSplitMenuButton.setIndex(-1);
             Map<String, String> musicFileMap = new HashMap<>();
             files.forEach(file -> {
-                String extension = file.getName().substring(file.getName().lastIndexOf('.'));
+                String extension = file.getName();
                 switch (extension) {
                     case ".mp3":
                     case ".ogg":
@@ -158,13 +167,20 @@ public class MainController {
         }
     }
 
+    /**
+     * "재생" 버튼 클릭 시 동작할 메서드
+     * @throws UnsupportedAudioFileException 지원되지 않는 오디오
+     * @throws LineUnavailableException 지원되지 않는 재생 장치
+     * @throws IOException 음악 파일에 문제 발생
+     * @throws AWTException UI에 문제 발생
+     */
     @FXML
-    public void play() throws UnsupportedAudioFileException, LineUnavailableException, IOException, AWTException {
+    public void onPlayButtonClick() throws UnsupportedAudioFileException, LineUnavailableException, IOException, AWTException {
         if(playbackStatus == PlaybackStatus.PLAYING) {
-            stopped();
+            stop();
             playbackStatus = PlaybackStatus.STOPPED;
         } else if(musicSplitMenuButton.getMap() != null) {
-            /* osu 파일 설정 */
+            // osu 파일 설정
             if(musicSplitMenuButton.getText().endsWith(".osu")) {
                 osuFile = OsuFile.builder()
                         .filePath((String) musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()))
@@ -183,7 +199,7 @@ public class MainController {
             if(playbackStatus == PlaybackStatus.PAUSED) {
                 playing(1_000, 1_000);
             } else {
-                stopped();
+                stop();
                 player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
                 player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
             }
@@ -191,6 +207,17 @@ public class MainController {
         }
     }
 
+    /**
+     * 음악 재생을 위한 플레이어 초기 설정
+     * @param wavFile 재생할 파일
+     * @param index SplitMenuButton에서 선택한 Item의 인덱스
+     * @param delay 시작 대기시간 (ms)
+     * @param volume 음악 볼륨 (0.0 ~ 100.0)
+     * @return 음악 파일이 포함된 오디오 플레이어 (없을 시 null)
+     * @throws UnsupportedAudioFileException 지원하지 않는 재생 장치일 경우
+     * @throws LineUnavailableException 사용할 수 없는 재생 장치일 경우
+     * @throws IOException 음악 파일에 문제가 있을 경우
+     */
     private AudioPlayer playerInit(File wavFile, int index, long delay, float volume) throws UnsupportedAudioFileException, LineUnavailableException, IOException {
         AudioPlayer newAudioPlayer;
         if (index >= 0) {
@@ -211,21 +238,46 @@ public class MainController {
     }
 
     public void playing(long d1, long d2) {
+        boolean isOsu = musicSplitMenuButton.getText().endsWith("osu");
+        if(isOsu) {
+            try {
+                osuFile = new OsuFile(musicSplitMenuButton.getText(), new File(String.valueOf(musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()))));
+            } catch (IOException e) {
+                warn(STR."Not found osu file. \{e.toString()}");
+                throw new RuntimeException(e);
+            } catch (AWTException e) {
+                error(e);
+                throw new RuntimeException(e);
+            }
+        }
+        osuFile.getOsuMapInfo().playBPM(); // BPM 입력
+
+        startTime = System.nanoTime();
         if(player1 != null)
             player1.play(d1, (float)speakerSlider1.getValue());
         if(player2 != null)
             player2.play(d2, (float)speakerSlider2.getValue());
+        if(isOsu)
+            osuFile.getOsuMapInfo().playNote(d1); // 노트 재생
     }
 
-    public void stopped() {
+    /**
+     * 재생 중인 음악을 중지
+     */
+    public void stop() {
         if(player1 != null)
             player1.stop();
         if(player2 != null)
             player2.stop();
     }
 
+    /**
+     * 재생 중인 음악을 일시정지
+     */
     @FXML
-    public void pause() {
+    public void onPauseButtonClick() {
+        if(musicSplitMenuButton.getText().endsWith("osu")) // osu 파일일 경우 일시정지 불가
+            return; // TODO: 추후에 채보 파일이 있어도 일시정지가 가능하게 만들 예정
         if(playbackStatus == PlaybackStatus.PLAYING) {
             if (player1 != null)
                 player1.pause();
@@ -233,10 +285,8 @@ public class MainController {
                 player2.pause();
             playbackStatus = PlaybackStatus.PAUSED;
         } else {
-            playing(1_000, 1_000);
+            playing(1_000, 1_000); // TODO: 현재는 1초로 고정되어있으나 추후 설정으로 시간이 변경 가능하도록 기능 추가 예정
             playbackStatus = PlaybackStatus.PLAYING;
         }
     }
-
-
 }

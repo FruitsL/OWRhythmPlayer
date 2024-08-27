@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 
 import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 
+import static com.fruitcoding.owrhythmplayer.controller.MainController.startTime;
+
 abstract public class MapInfo {
     @Getter
     public Queue<NoteInfo> noteInfos = new LinkedList<NoteInfo>();
@@ -22,8 +24,6 @@ abstract public class MapInfo {
     public Queue<BPMInfo> bpmInfos = new LinkedList<BPMInfo>();
 
     Robot robot = null;
-    @Setter
-    private long initTime = 0;
     @Setter @Getter
     private int initBPM = 0;
 
@@ -61,11 +61,12 @@ abstract public class MapInfo {
     /**
      * 노트 재생
      */
-    public void playNote() {
+    public void playNote(long delay) {
+        while(System.nanoTime() - startTime < delay); // 정확한 실행을 위한 반복 (1ms 미만 오차)
         while(!noteInfos.isEmpty()) {
             NoteInfo noteInfo = noteInfos.poll();
 
-            while(noteInfo.nanoTime() < System.nanoTime() - initTime);
+            while(noteInfo.nanoTime() < System.nanoTime() - startTime);
             if (noteInfo.isPress()) {
                 robot.keyPress(noteInfo.keyCode());
             } else {
@@ -81,7 +82,7 @@ abstract public class MapInfo {
         while(!bpmInfos.isEmpty()) {
             BPMInfo bpmInfo = bpmInfos.poll();
 
-            while(bpmInfo.nanoTime() < System.nanoTime() - initTime);
+            while(bpmInfo.nanoTime() < System.nanoTime() - startTime);
             robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         }
@@ -90,7 +91,7 @@ abstract public class MapInfo {
     /**
      * BPM 입력 (미완성)
      */
-    public void inputBPM() {
+    public void inputBPM() { // TODO: 정상 동작하는지 확인 필요
         bpmInfos.forEach(bpmInfo -> {
             String num = new StringBuilder(Integer.toBinaryString(bpmInfo.bpm())).reverse().toString();
             for(int i = num.length() - 1; i >= 0; i--) {

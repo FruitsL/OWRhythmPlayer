@@ -18,6 +18,10 @@ public class MapSplitMenuButton extends SplitMenuButton {
     private Map<?, ?> map = null;
     private int index = -1;
 
+    /**
+     * item의 값이 key인 Map setter
+     * @param map item이 key인 Map
+     */
     public void setMap(Map<?, ?> map) {
         this.map = map;
         this.getItems().clear();
@@ -31,7 +35,6 @@ public class MapSplitMenuButton extends SplitMenuButton {
 
     /**
      * 메뉴 목록에 아이템 선택 시 인덱스 업데이트
-     *
      * @param item 선택된 아이템
      */
     protected void setupMenuItem(MenuItem item) {
@@ -42,7 +45,6 @@ public class MapSplitMenuButton extends SplitMenuButton {
 
     /**
      * index Setter (없는 인덱스가 들어오면 무시됨)
-     *
      * @param index 설정할 인덱스 값
      */
     public void setIndex(int index) {
@@ -54,6 +56,10 @@ public class MapSplitMenuButton extends SplitMenuButton {
         }
     }
 
+    /**
+     * key와 value가 같은 Map으로 세팅
+     * @param list 추가할 목록
+     */
     public void setList(List<String> list) {
         list.stream().map(MenuItem::new)
                 .peek(this::setupMenuItem)

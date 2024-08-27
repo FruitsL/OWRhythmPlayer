@@ -19,7 +19,6 @@ public class AudioDevice {
 
     /**
      * 인스턴스를 반환하는 정적 메서드
-     *
      * @return AudioDevices instance
      */
     public static AudioDevice getInstance() {
@@ -38,6 +37,10 @@ public class AudioDevice {
         setTargetMixerInfos();
     }
 
+    /**
+     * 재생 장치 목록 가져오기 (@Getter)
+     * @return 재생 장치 목록
+     */
     public List<String> getSourceMixerInfosNameList() {
         return getSourceMixerInfos().stream()
                 .map(Mixer.Info::getName)
@@ -45,7 +48,7 @@ public class AudioDevice {
     }
 
     /**
-     * sourceMixerInfos @Setter
+     * 재생 장치 목록 불러오기 (@Setter)
      */
     private void setSourceMixerInfos() {
         sourceMixerInfos = Arrays.stream(AudioSystem.getMixerInfo())
@@ -57,6 +60,10 @@ public class AudioDevice {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
+    /**
+     * 출력 장치 목록 가져오기 (@Getter)
+     * @return 출력 장치 목록
+     */
     public List<String> getTargetMixerInfosNameList() {
         return getTargetMixerInfos().stream()
                 .map(Mixer.Info::getName)
@@ -64,7 +71,7 @@ public class AudioDevice {
     }
 
     /**
-     * targetMixerInfos @Setter
+     * 출력 장치 목록 불러오기 (@Setter)
      */
     private void setTargetMixerInfos() {
         targetMixerInfos = Arrays.stream(AudioSystem.getMixerInfo())

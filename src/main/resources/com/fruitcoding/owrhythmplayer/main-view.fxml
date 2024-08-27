@@ -93,12 +93,12 @@
                         <Insets right="10.0" />
                      </GridPane.margin></Label>
                   <NumericTextField fx:id="speakerDelayTextField2" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                  <Button fx:id="playButton" onAction="#play" alignment="CENTER" mnemonicParsing="false" text="재생" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
+                  <Button fx:id="playButton" onAction="#onPlayButtonClick" alignment="CENTER" mnemonicParsing="false" text="재생" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets right="10.0" />
                      </GridPane.margin>
                   </Button>
-                  <Button fx:id="stopButton" onAction="#pause" alignment="CENTER" mnemonicParsing="false" text="일시정지" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                  <Button fx:id="stopButton" onAction="#onPauseButtonClick" alignment="CENTER" mnemonicParsing="false" text="일시정지" GridPane.columnIndex="2" GridPane.rowIndex="5">
                      <GridPane.margin>
                         <Insets left="10.0" />
                      </GridPane.margin></Button>

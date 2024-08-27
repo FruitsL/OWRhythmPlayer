@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import static com.fruitcoding.owrhythmplayer.controller.MainController.startTime;
 import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.*;
 
 @Setter
@@ -26,18 +27,29 @@ public class AudioPlayer {
         scheduler = Executors.newSingleThreadScheduledExecutor();
     }
 
+    /**
+     * AudioPlayer에서 사용할  오디오 파일 추가
+     * @throws UnsupportedAudioFileException 지원하지 않는 오디오 파일
+     * @throws IOException 오디오 파일에 문제 발생 시
+     * @throws LineUnavailableException 지원되지 않는 장치일 경우
+     */
     private void initAudioClip() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
         AudioInputStream ais = AudioSystem.getAudioInputStream(file);
         audioClip = AudioSystem.getClip(info);
         audioClip.open(ais);
     }
 
+    /**
+     * AudioPlayer 재생
+     * @param delay 시작 딜레이
+     * @param volume 음악 볼륨
+     */
     public void play(long delay, float volume) {
         long time = System.nanoTime();
         delay *= 1_000_000;
         if(audioClip != null && !audioClip.isRunning()) {
             setVolume(volume);
-            while(System.nanoTime() - time < delay); // 정확한 실행을 위한 반복 (1ms 미만 오차)
+            while(System.nanoTime() - startTime < delay); // 정확한 실행을 위한 반복 (1ms 미만 오차)
             audioClip.start();
             info(STR."Play time: \{System.nanoTime() - time}");
         } else {
@@ -45,15 +57,25 @@ public class AudioPlayer {
         }
     }
 
+    /**
+     * 음악이 재생 중인지 확인
+     * @return 음악 재생 여부
+     */
     public boolean isPlaying() {
         return audioClip.isRunning();
     }
 
+    /**
+     * 음악 일시정지
+     */
     public void pause() {
         if(audioClip != null && audioClip.isRunning())
             audioClip.stop();
     }
 
+    /**
+     * 음악 중지
+     */
     public void stop() {
         if(audioClip != null) {
             audioClip.stop();
@@ -61,12 +83,19 @@ public class AudioPlayer {
         }
     }
 
+    /**
+     * 음악 강제 중지
+     */
     public void shutdown() {
         scheduler.shutdown();
         if(audioClip != null)
             audioClip.close();
     }
 
+    /**
+     * 음악의 볼륨 설정
+     * @param volume 음악 파일에 설정할 볼륨
+     */
     private void setVolume(float volume) {
         FloatControl gainControl = (FloatControl)audioClip.getControl(FloatControl.Type.MASTER_GAIN);
         float dB = (float)(Math.log(volume / 100.0) / Math.log(10.0) * 20.0);

@@ -9,6 +9,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Map &lt;-&gt; Json File 변환
+ * @param <K>
+ * @param <V>
+ */
 public abstract class JSONMap<K, V> {
     @Getter @Setter
     Map<K, V> map = new HashMap<>();

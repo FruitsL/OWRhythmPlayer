@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 메인 화면의 UI 데이터 저장 (Key: 변수명, Value: 저장할 값)
+ */
 public class MainMap extends JSONMap<String, String> {
 
     @Override

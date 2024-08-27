@@ -5,6 +5,9 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import lombok.Getter;
 
+/**
+ * 슬라이더 이동 시 위에 수치가 보이는 툴팁 슬라이더
+ */
 public class TooltipSlider extends Slider {
     private final Tooltip tooltip;
 

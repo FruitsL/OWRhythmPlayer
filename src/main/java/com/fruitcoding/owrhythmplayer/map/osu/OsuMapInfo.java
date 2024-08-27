@@ -44,7 +44,7 @@ public class OsuMapInfo extends MapInfo {
         if(Integer.parseInt(additionInfos[0]) > 1) {
             noteInfos.add( new NoteInfo((Long.parseLong(infos[2]) + Integer.parseInt(additionInfos[0])) * 1_000_000, false, hotkeyMap.get(lineMap.get(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2))) );
         } else {
-            noteInfos.add( new NoteInfo(Long.parseLong(infos[2]) * 1_000_000, false, hotkeyMap.get(lineMap.get(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2))) );
+            noteInfos.add( new NoteInfo(Long.parseLong(infos[2]) * 1_000_000 + 1_000, false, hotkeyMap.get(lineMap.get(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2))) ); // 1ms 뒤에 떼기
         }
     }
 

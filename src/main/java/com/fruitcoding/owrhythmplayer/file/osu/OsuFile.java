@@ -1,10 +1,12 @@
 package com.fruitcoding.owrhythmplayer.file.osu;
 
 import com.fruitcoding.owrhythmplayer.file.base.MapFile;
+import com.fruitcoding.owrhythmplayer.map.osu.OsuMapInfo;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +20,10 @@ public class OsuFile extends MapFile {
     private List<String> hitObjects = null;
     private String audioFileName = null;
     private int circleSize = 4;
+    private OsuMapInfo osuMapInfo;
 
     @Builder
-    public OsuFile(String filePath, File file) throws IOException {
+    public OsuFile(String filePath, File file) throws IOException, AWTException {
         super();
         if (filePath.isBlank()) {
             setFile(file);
@@ -28,6 +31,7 @@ public class OsuFile extends MapFile {
             setFilePath(filePath);
         }
         readFile();
+        osuMapInfo = new OsuMapInfo(circleSize);
     }
 
     private void readFile() throws IOException {

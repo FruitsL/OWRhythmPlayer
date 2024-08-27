@@ -63,7 +63,7 @@ public class GlobalKeyMouseListener extends SwingKeyAdapter {
                     case "PLAY":
                         info("Button: PLAY");
                         try {
-                            mainController.play();
+                            mainController.onPlayButtonClick();
                         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
                             error(STR."play error.\n\{e}");
                         } catch (AWTException e) {
@@ -72,7 +72,7 @@ public class GlobalKeyMouseListener extends SwingKeyAdapter {
                         break;
                     case "STOP":
                         info("Button: STOP");
-                        mainController.pause();
+                        mainController.onPauseButtonClick();
                         break;
                     default:
                         break;

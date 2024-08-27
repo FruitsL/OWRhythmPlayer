@@ -8,6 +8,9 @@ import java.util.Map;
 
 import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 
+/**
+ * 단축키 저장 (Key: KeyCode, Value: 오버워치 버튼 영문명)
+ */
 public class HotKeyMap extends JSONMap<Integer, String> {
     private static HotKeyMap instance;
     @Override

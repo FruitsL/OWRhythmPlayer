@@ -21,7 +21,6 @@ public class AudioFileConverter {
 
     /**
      * 인스턴스를 반환하는 정적 메서드
-     *
      * @return ConvertMusicFile instance
      */
     public static AudioFileConverter getInstance() {
@@ -37,9 +36,7 @@ public class AudioFileConverter {
 
     /**
      * 오디오 파일을 wav 포맷으로 변환
-     *
      * @param filePath wav로 변환할 오디오 파일 변경
-     * @throws EncoderException wav로 변환 중 오류 발생 시
      */
     public void convertToWAV(String filePath) {
         info(STR."Source : \{filePath}, Target : \{wavFile.getAbsolutePath()}");
@@ -67,6 +64,10 @@ public class AudioFileConverter {
         }
     }
 
+    /**
+     * wav 변환 시 생성되는 에러 로그 출력 (미 출력 시 변환 불가)
+     * @param process wav 파일로 변환하는 ffmpeg 프로세스
+     */
     private void errorStream(Process process) {
         new Thread(() -> {
             try(BufferedReader br = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
