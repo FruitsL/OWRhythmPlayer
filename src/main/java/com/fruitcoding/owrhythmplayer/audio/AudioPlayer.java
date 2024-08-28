@@ -66,6 +66,12 @@ public class AudioPlayer {
     }
 
     /**
+     * 음악이 일시정지인지 확인
+     * @return 일시정지 여부
+     */
+    public boolean isPaused() { return !audioClip.isRunning() && audioClip.getFramePosition() > 0; }
+
+    /**
      * 음악 일시정지
      */
     public void pause() {

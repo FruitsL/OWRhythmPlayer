@@ -13,6 +13,11 @@ import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
  */
 public class HotKeyMap extends JSONMap<Integer, String> {
     private static HotKeyMap instance;
+
+    /**
+     * 단축키가 저장된 파일 경로 가져오기
+     * @return 단축키가 저장된 파일의 경로
+     */
     @Override
     String getFilePath() {
         return STR."\{System.getProperty("user.dir")}/data/save/hotkey.json";
@@ -24,6 +29,10 @@ public class HotKeyMap extends JSONMap<Integer, String> {
         return instance;
     }
 
+    /**
+     * json에서 가져온 데이터를 Map으로 변환
+     * @throws IOException json 파일이 없을 시
+     */
     private HotKeyMap() throws IOException {
         try {
             jsonToMap(Integer.class, String.class);
@@ -36,6 +45,10 @@ public class HotKeyMap extends JSONMap<Integer, String> {
         }
     }
 
+    /**
+     * json 파일에 없을 시 해당 데이터로 단축키 설정 (초기 단축키 설정)
+     * @return 초기 단축키 설정
+     */
     private Map<Integer, String> initMap() {
         Map<Integer, String> map = new HashMap<>();
         map.put(MouseEvent.BUTTON1 * -1, "PRIMARY_FIRE");

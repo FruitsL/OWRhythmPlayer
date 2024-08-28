@@ -22,6 +22,13 @@ public class OsuFile extends MapFile {
     private int circleSize = 4;
     private OsuMapInfo osuMapInfo;
 
+    /**
+     * 파일 또는 파일 경로로 파일을 받아서 필요한 내용 수집
+     * @param filePath 파일 뎡로
+     * @param file 파일
+     * @throws IOException 파일이 없을 경우
+     * @throws AWTException UI에 문제 발생할 경우
+     */
     @Builder
     public OsuFile(String filePath, File file) throws IOException, AWTException {
         super();
@@ -34,6 +41,10 @@ public class OsuFile extends MapFile {
         osuMapInfo = new OsuMapInfo(circleSize);
     }
 
+    /**
+     * 파일을 읽어서 필요한 정보 추가
+     * @throws IOException 파일이 없을 경우
+     */
     private void readFile() throws IOException {
         try(BufferedReader br = new BufferedReader(new FileReader(getFile()))) {
             audioFileName = getContent(br, "AudioFilename:").replace("AudioFilename: ", "").trim();
@@ -44,6 +55,13 @@ public class OsuFile extends MapFile {
         }
     }
 
+    /**
+     * content가 포함된 라인 이후부터 빈 라인까지 가져오기
+     * @param br 버퍼 리더
+     * @param content 탐색할 내용
+     * @return content 이후부터 빈 라인 전까지
+     * @throws IOException 탐색할 파일이 없을 경우
+     */
     private List<String> getContents(BufferedReader br, String content) throws IOException {
         List<String> contents = new ArrayList<>();
         String line;
@@ -59,6 +77,13 @@ public class OsuFile extends MapFile {
         return contents;
     }
 
+    /**
+     * content가 포함된 라인 가져오기
+     * @param br 버퍼 리더
+     * @param content 탐색할 내용
+     * @return context가 포함된 라인
+     * @throws IOException 탐색할 파일이 없을 경우
+     */
     private String getContent(BufferedReader br, String content) throws IOException {
         String line;
 

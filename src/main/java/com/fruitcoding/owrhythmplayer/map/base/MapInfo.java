@@ -61,7 +61,7 @@ abstract public class MapInfo {
     /**
      * 노트 재생
      */
-    public void playNote(long delay) {
+    public void playNote(long delay) { // TODO: 정상적으로 노트 생성되는지 확인 필요
         while(System.nanoTime() - startTime < delay); // 정확한 실행을 위한 반복 (1ms 미만 오차)
         while(!noteInfos.isEmpty()) {
             NoteInfo noteInfo = noteInfos.poll();

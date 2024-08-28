@@ -8,7 +8,6 @@ import com.fruitcoding.owrhythmplayer.controller.component.MapSplitMenuButton;
 import com.fruitcoding.owrhythmplayer.controller.component.NumericTextField;
 import com.fruitcoding.owrhythmplayer.controller.component.TooltipSlider;
 import com.fruitcoding.owrhythmplayer.data.MainMap;
-import com.fruitcoding.owrhythmplayer.data.PlaybackStatus;
 import com.fruitcoding.owrhythmplayer.file.osu.OsuFile;
 import com.fruitcoding.owrhythmplayer.file.osu.OszFile;
 import com.fruitcoding.owrhythmplayer.map.osu.OsuMapInfo;
@@ -72,8 +71,6 @@ public class MainController {
     @Getter
     private MainMap mainMap;
     private OsuFile osuFile;
-
-    private PlaybackStatus playbackStatus;
 
     OsuMapInfo osuMapInfo;
 
@@ -176,9 +173,8 @@ public class MainController {
      */
     @FXML
     public void onPlayButtonClick() throws UnsupportedAudioFileException, LineUnavailableException, IOException, AWTException {
-        if(playbackStatus == PlaybackStatus.PLAYING) {
+        if(player1.isPlaying() || player2.isPlaying()) { // TODO: 곡 재생이 완료된 뒤 다시 재생을 하면 중지가 아닌 재생이 시작되는지 확인 필요
             stop();
-            playbackStatus = PlaybackStatus.STOPPED;
         } else if(musicSplitMenuButton.getMap() != null) {
             // osu 파일 설정
             if(musicSplitMenuButton.getText().endsWith(".osu")) {
@@ -196,14 +192,13 @@ public class MainController {
             File wavFile = AudioFileConverter.getInstance().getWavFile();
             Platform.runLater(() -> playButton.setText("중지")); // 다른 스레드에서도 동작시킬 수 있음
 
-            if(playbackStatus == PlaybackStatus.PAUSED) {
+            if(player1.isPaused() && player2.isPaused()) {
                 playing(1_000, 1_000);
             } else {
                 stop();
                 player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
                 player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
             }
-            playbackStatus = PlaybackStatus.PLAYING;
         }
     }
 
@@ -278,15 +273,13 @@ public class MainController {
     public void onPauseButtonClick() {
         if(musicSplitMenuButton.getText().endsWith("osu")) // osu 파일일 경우 일시정지 불가
             return; // TODO: 추후에 채보 파일이 있어도 일시정지가 가능하게 만들 예정
-        if(playbackStatus == PlaybackStatus.PLAYING) {
+        if(player1.isPlaying() && player2.isPlaying()) {
             if (player1 != null)
                 player1.pause();
             if (player2 != null)
                 player2.pause();
-            playbackStatus = PlaybackStatus.PAUSED;
         } else {
             playing(1_000, 1_000); // TODO: 현재는 1초로 고정되어있으나 추후 설정으로 시간이 변경 가능하도록 기능 추가 예정
-            playbackStatus = PlaybackStatus.PLAYING;
         }
     }
 }
