@@ -63,6 +63,8 @@ public class HotKeyMap extends JSONMap<Integer, String> {
         map.put(KeyEvent.VK_R, "RELOAD");
         map.put(KeyEvent.VK_F11, "PLAY");
         map.put(KeyEvent.VK_F12, "STOP");
+        map.put(KeyEvent.VK_1, "WEAPON1");
+        map.put(KeyEvent.VK_2, "WEAPON2");
         return map;
     }
 

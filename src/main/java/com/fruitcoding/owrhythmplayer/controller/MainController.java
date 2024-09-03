@@ -72,8 +72,6 @@ public class MainController {
     private MainMap mainMap;
     private OsuFile osuFile;
 
-    OsuMapInfo osuMapInfo;
-
     /**
      * MainController 생성 시 init
      * @throws IOException UI 오류 발생 시
@@ -142,10 +140,10 @@ public class MainController {
                 }
             }
 
-            musicSplitMenuButton.setIndex(-1);
             Map<String, String> musicFileMap = new HashMap<>();
             files.forEach(file -> {
-                String extension = file.getName();
+                String extension = file.getName().substring(file.getName().lastIndexOf('.'));
+                info(extension);
                 switch (extension) {
                     case ".mp3":
                     case ".ogg":
@@ -158,6 +156,7 @@ public class MainController {
                 }
             });
 
+            musicSplitMenuButton.setIndex(-1);
             info(musicFileMap);
             musicSplitMenuButton.setMap(musicFileMap);
             musicSplitMenuButton.setIndex(0);
@@ -173,37 +172,38 @@ public class MainController {
      */
     @FXML
     public void onPlayButtonClick() throws UnsupportedAudioFileException, LineUnavailableException, IOException, AWTException {
-        if(player1.isPlaying() || player2.isPlaying()) { // TODO: 곡 재생이 완료된 뒤 다시 재생을 하면 중지가 아닌 재생이 시작되는지 확인 필요
-            stop();
-        } else if(musicSplitMenuButton.getMap() != null) {
+        if(player1 == null || player2 == null) { // TODO: 곡 재생이 완료된 뒤 다시 재생을 하면 중지가 아닌 재생이 시작되는지 확인 필요
             // osu 파일 설정
+            boolean isOsu = musicSplitMenuButton.getText().endsWith("osu");
             if(musicSplitMenuButton.getText().endsWith(".osu")) {
                 osuFile = OsuFile.builder()
                         .filePath((String) musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()))
                         .build();
-                osuMapInfo = new OsuMapInfo(osuFile.getCircleSize());
                 AudioFileConverter.getInstance().convertToWAV(STR."\{Paths.get(osuFile.getFile().getAbsolutePath()).getParent()}/\{osuFile.getAudioFileName()}");
 
-                osuMapInfo.inputBPM();
+                osuFile.getOsuMapInfo().inputBPM();
             } else {
                 AudioFileConverter.getInstance().convertToWAV((String) musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()));
             }
 
             File wavFile = AudioFileConverter.getInstance().getWavFile();
-            Platform.runLater(() -> playButton.setText("중지")); // 다른 스레드에서도 동작시킬 수 있음
+            startTime = System.nanoTime();
 
-            if(player1.isPaused() && player2.isPaused()) {
-                playing(1_000, 1_000);
-            } else {
-                stop();
-                player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
-                player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
-            }
+            player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
+            player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
+            osuFile.getOsuMapInfo().playNote(Long.parseLong(speakerDelayTextField1.getText()));
+            osuFile.getOsuMapInfo().playBPM(Long.parseLong(speakerDelayTextField1.getText()));
+            Platform.runLater(() -> playButton.setText("중지")); // 다른 스레드에서도 동작시킬 수 있음
+        } else if(player1.isPaused() || player2.isPaused()) {
+            playing(1000, 1000);
+        } else if(player1.isPlaying() || player2.isPlaying()) {
+            stop();
+            Platform.runLater(() -> playButton.setText("재생")); // 다른 스레드에서도 동작시킬 수 있음
         }
     }
 
     /**
-     * 음악 재생을 위한 플레이어 초기 설정
+     * 음악 재생을 위한 플레이어 초기 설정 & 재생
      * @param wavFile 재생할 파일
      * @param index SplitMenuButton에서 선택한 Item의 인덱스
      * @param delay 시작 대기시간 (ms)
@@ -236,7 +236,7 @@ public class MainController {
         boolean isOsu = musicSplitMenuButton.getText().endsWith("osu");
         if(isOsu) {
             try {
-                osuFile = new OsuFile(musicSplitMenuButton.getText(), new File(String.valueOf(musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()))));
+                osuFile = new OsuFile((String) musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()), new File(String.valueOf(musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()))));
             } catch (IOException e) {
                 warn(STR."Not found osu file. \{e.toString()}");
                 throw new RuntimeException(e);
@@ -245,7 +245,7 @@ public class MainController {
                 throw new RuntimeException(e);
             }
         }
-        osuFile.getOsuMapInfo().playBPM(); // BPM 입력
+//        osuFile.getOsuMapInfo().playBPM(); // BPM 입력
 
         startTime = System.nanoTime();
         if(player1 != null)
@@ -260,10 +260,18 @@ public class MainController {
      * 재생 중인 음악을 중지
      */
     public void stop() {
-        if(player1 != null)
+        if(player1 != null) {
             player1.stop();
-        if(player2 != null)
+            player1 = null;
+        }
+        if(player2 != null) {
             player2.stop();
+            player2 = null;
+        }
+        if(osuFile != null) {
+            osuFile.getOsuMapInfo().stopNote();
+            osuFile = null;
+        }
     }
 
     /**

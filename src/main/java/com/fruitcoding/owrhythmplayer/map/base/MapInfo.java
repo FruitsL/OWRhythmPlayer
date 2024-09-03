@@ -1,31 +1,32 @@
 package com.fruitcoding.owrhythmplayer.map.base;
 
+import com.fruitcoding.owrhythmplayer.audio.AudioPlayer;
+import com.fruitcoding.owrhythmplayer.controller.MainController;
 import com.fruitcoding.owrhythmplayer.data.HotKeyMap;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
-
 import static com.fruitcoding.owrhythmplayer.controller.MainController.startTime;
+import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.*;
 
 abstract public class MapInfo {
     @Getter
-    public Queue<NoteInfo> noteInfos = new LinkedList<NoteInfo>();
+    public Queue<NoteInfo> noteInfos = new PriorityQueue<>( );
     @Getter
     public Queue<BPMInfo> bpmInfos = new LinkedList<BPMInfo>();
 
     Robot robot = null;
     @Setter @Getter
     private int initBPM = 0;
+    private boolean isNotePlay;
 
     public abstract void addNoteInfosByString(Object info);
     public abstract void addBPMInfosByString(Object info);
@@ -44,67 +45,124 @@ abstract public class MapInfo {
                 .collect(Collectors.toMap(
                         Map.Entry::getValue, Map.Entry::getKey
                 ));
-        numToKeyMap = Map.of( // 2 ^ k
-                0, Math.abs(hotkeyMap.get("PRIMARY_FIRE")),
-                1, Math.abs(hotkeyMap.get("SECONDARY_FIRE")),
-                2, hotkeyMap.get("ABILITY_1"),
-                3, hotkeyMap.get("ABILITY_2"),
-                4, hotkeyMap.get("ULTIMATE"),
-                5, hotkeyMap.get("INTERACT"),
-                6, hotkeyMap.get("JUMP"),
-                7, hotkeyMap.get("CROUCH"),
-                8, hotkeyMap.get("MELEE"),
-                9, hotkeyMap.get("RELOAD")
-        );
+        numToKeyMap = new HashMap<>();
+        numToKeyMap.put(0, Math.abs(hotkeyMap.get("PRIMARY_FIRE")));
+        numToKeyMap.put(1, Math.abs(hotkeyMap.get("SECONDARY_FIRE")));
+        numToKeyMap.put(2, hotkeyMap.get("ABILITY_1"));
+        numToKeyMap.put(3, hotkeyMap.get("ABILITY_2"));
+        numToKeyMap.put(4, hotkeyMap.get("ULTIMATE"));
+        numToKeyMap.put(5, hotkeyMap.get("INTERACT"));
+        numToKeyMap.put(6, hotkeyMap.get("JUMP"));
+        numToKeyMap.put(7, hotkeyMap.get("CROUCH"));
+        numToKeyMap.put(8, hotkeyMap.get("MELEE"));
+        numToKeyMap.put(9, hotkeyMap.get("RELOAD"));
+        numToKeyMap.put(10, hotkeyMap.get("WEAPON1"));
+        numToKeyMap.put(11, hotkeyMap.get("WEAPON2"));
     }
 
     /**
      * 노트 재생
      */
-    public void playNote(long delay) { // TODO: 정상적으로 노트 생성되는지 확인 필요
-        while(System.nanoTime() - startTime < delay); // 정확한 실행을 위한 반복 (1ms 미만 오차)
-        while(!noteInfos.isEmpty()) {
-            NoteInfo noteInfo = noteInfos.poll();
+    public void playNote(long delay) {
+        isNotePlay = true;
+        new Thread(() -> {
+            info(STR."Queue Size: \{noteInfos.size()}");
+            while(System.nanoTime() - startTime < delay); // 정확한 실행을 위한 반복 (1ms 미만 오차)
+            while(!noteInfos.isEmpty() && isNotePlay) {
+                NoteInfo noteInfo = noteInfos.poll();
+                debug(STR."\{noteInfo.nanoTime()}, \{noteInfo.keyCode()}, \{noteInfo.isPress()}");
 
-            while(noteInfo.nanoTime() < System.nanoTime() - startTime);
-            if (noteInfo.isPress()) {
-                robot.keyPress(noteInfo.keyCode());
-            } else {
-                robot.keyRelease(noteInfo.keyCode());
+                while(noteInfo.nanoTime() + startTime + delay > System.nanoTime());
+                if(!isNotePlay)
+                    return;
+
+                if (noteInfo.isPress()) {
+                    robot.keyPress(noteInfo.keyCode());
+                } else {
+                    robot.keyRelease(noteInfo.keyCode());
+                }
             }
-        }
+        }).start();
+    }
+
+    public void stopNote() {
+        isNotePlay = false;
+        hotkeyMap.values().forEach(v -> {
+            info(STR."hotkeyMap Release: \{v}");
+            if(v >= 0)
+                robot.keyRelease(v);
+        });
     }
 
     /**
      * BPM 변환 재생
      */
-    public void playBPM() {
-        while(!bpmInfos.isEmpty()) {
-            BPMInfo bpmInfo = bpmInfos.poll();
+    public void playBPM(long delay) {
+        isNotePlay = true;
+        new Thread(() -> {
+            boolean weapon = false;
+            while (!bpmInfos.isEmpty() && isNotePlay) {
+                BPMInfo bpmInfo = bpmInfos.poll();
 
-            while(bpmInfo.nanoTime() < System.nanoTime() - startTime);
-            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-        }
+                while(bpmInfo.getNanoTime() + startTime + delay > System.nanoTime());
+                if(!isNotePlay)
+                    return;
+
+                info(STR."BPM 변경 : \{weapon}");
+                if(weapon) { // TODO: 제대로 변속 안바뀌는 증상 있음
+                    pressKey(robot, numToKeyMap.get(10));
+                    weapon = false;
+                } else {
+                    pressKey(robot, numToKeyMap.get(11));
+                    weapon = true;
+                }
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
     }
 
     /**
      * BPM 입력 (미완성)
      */
-    public void inputBPM() { // TODO: 정상 동작하는지 확인 필요
+    public void inputBPM() {
+        pressKey(robot, numToKeyMap.get(11)); // START
         bpmInfos.forEach(bpmInfo -> {
-            String num = new StringBuilder(Integer.toBinaryString(bpmInfo.bpm())).reverse().toString();
+            info(STR."BPM 입력 : \{bpmInfo.getBpm()}");
+            String num = new StringBuilder(Integer.toBinaryString(bpmInfo.getBpm())).reverse().toString();
+            for(int i = num.length() - 1; i >= 0; i--) { // TODO: BPM이 매우 크면 가장 작은 값이 무시되는지 확인 필요
+                if(num.charAt(i) == '1') {
+                    info(numToKeyMap.get(i));
+                    if(i < 2)
+                        robot.mousePress(InputEvent.getMaskForButton(numToKeyMap.get(i)));
+                    else
+                        robot.keyPress(numToKeyMap.get(i));
+                }
+            }
+            try {
+                Thread.sleep(100); // robot.delay는 사용 불가
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             for(int i = num.length() - 1; i >= 0; i--) {
                 if(num.charAt(i) == '1') {
                     info(numToKeyMap.get(i));
                     if(i < 2)
-                        pressMouse(robot, numToKeyMap.get(i));
+                        robot.mouseRelease(InputEvent.getMaskForButton(numToKeyMap.get(i)));
                     else
-                        pressKey(robot, numToKeyMap.get(i));
+                        robot.keyRelease(numToKeyMap.get(i));
                 }
             }
-            robot.delay(500);
+            try {
+                Thread.sleep(200);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         });
+        pressKey(robot, numToKeyMap.get(10)); // END
     }
 
     private void pressKey(Robot robot, int keyCode) {

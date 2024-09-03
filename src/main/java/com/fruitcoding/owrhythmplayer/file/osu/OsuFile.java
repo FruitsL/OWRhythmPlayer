@@ -1,6 +1,7 @@
 package com.fruitcoding.owrhythmplayer.file.osu;
 
 import com.fruitcoding.owrhythmplayer.file.base.MapFile;
+import com.fruitcoding.owrhythmplayer.map.base.NoteInfo;
 import com.fruitcoding.owrhythmplayer.map.osu.OsuMapInfo;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,6 +10,7 @@ import lombok.Setter;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.*;
@@ -38,7 +40,11 @@ public class OsuFile extends MapFile {
             setFilePath(filePath);
         }
         readFile();
+
         osuMapInfo = new OsuMapInfo(circleSize);
+        info(STR."timingPoints: \{timingPoints.size()}, hitObjects: \{hitObjects.size()}");
+        timingPoints.forEach(t -> osuMapInfo.addBPMInfosByString(t));
+        hitObjects.forEach(n -> osuMapInfo.addNoteInfosByString(n));
     }
 
     /**
