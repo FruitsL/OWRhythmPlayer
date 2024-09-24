@@ -63,16 +63,19 @@ abstract public class MapInfo {
     /**
      * 노트 재생
      */
-    public void playNote(long delay) {
+    public void playNote(long initDelay) {
         isNotePlay = true;
         new Thread(() -> {
-            info(STR."Queue Size: \{noteInfos.size()}");
-            while(System.nanoTime() - startTime < delay); // 정확한 실행을 위한 반복 (1ms 미만 오차)
+            long delay = initDelay * 1_000_000;
+            info(STR."Note time: \{System.nanoTime() - startTime}, Queue Size: \{noteInfos.size()}");
             while(!noteInfos.isEmpty() && isNotePlay) {
                 NoteInfo noteInfo = noteInfos.poll();
+                if(noteInfo == null)
+                    return;
+                while(noteInfo.nanoTime() + startTime + delay > System.nanoTime());
+
                 debug(STR."\{noteInfo.nanoTime()}, \{noteInfo.keyCode()}, \{noteInfo.isPress()}");
 
-                while(noteInfo.nanoTime() + startTime + delay > System.nanoTime());
                 if(!isNotePlay)
                     return;
 
@@ -97,9 +100,10 @@ abstract public class MapInfo {
     /**
      * BPM 변환 재생
      */
-    public void playBPM(long delay) {
+    public void playBPM(long initDelay) {
         isNotePlay = true;
         new Thread(() -> {
+            long delay = initDelay * 1_000_000;
             boolean weapon = false;
             while (!bpmInfos.isEmpty() && isNotePlay) {
                 BPMInfo bpmInfo = bpmInfos.poll();
@@ -130,12 +134,17 @@ abstract public class MapInfo {
      */
     public void inputBPM() {
         pressKey(robot, numToKeyMap.get(11)); // START
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         bpmInfos.forEach(bpmInfo -> {
             info(STR."BPM 입력 : \{bpmInfo.getBpm()}");
             String num = new StringBuilder(Integer.toBinaryString(bpmInfo.getBpm())).reverse().toString();
             for(int i = num.length() - 1; i >= 0; i--) { // TODO: BPM이 매우 크면 가장 작은 값이 무시되는지 확인 필요
                 if(num.charAt(i) == '1') {
-                    info(numToKeyMap.get(i));
+                    info(STR."Press: \{numToKeyMap.get(i)}");
                     if(i < 2)
                         robot.mousePress(InputEvent.getMaskForButton(numToKeyMap.get(i)));
                     else
@@ -148,9 +157,9 @@ abstract public class MapInfo {
                 throw new RuntimeException(e);
             }
             for(int i = num.length() - 1; i >= 0; i--) {
-                if(num.charAt(i) == '1') {
-                    info(numToKeyMap.get(i));
-                    if(i < 2)
+                if (num.charAt(i) == '1') {
+                    info(STR."Release: \{numToKeyMap.get(i)}");
+                    if (i < 2)
                         robot.mouseRelease(InputEvent.getMaskForButton(numToKeyMap.get(i)));
                     else
                         robot.keyRelease(numToKeyMap.get(i));
@@ -163,6 +172,7 @@ abstract public class MapInfo {
             }
         });
         pressKey(robot, numToKeyMap.get(10)); // END
+        info("BPM 입력 완료");
     }
 
     private void pressKey(Robot robot, int keyCode) {

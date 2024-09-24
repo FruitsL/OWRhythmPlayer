@@ -48,13 +48,13 @@ public class OsuMapInfo extends MapInfo {
     }
 
     @Override
-    public void addBPMInfosByString(Object info) {
+    public void addBPMInfosByString(Object info) { // TODO: 변속 -> 속도 순서로 BPM 변경 시 변속이 씹히고 속도만 반영되는 문제 있음
         String[] infos = info.toString().split(",");
 
         if(lastBPM < 0) {
             setInitBPM((int)Math.round(60_000 / Double.parseDouble(infos[1])));
             lastBPM = getInitBPM();
-            bpmInfos.add(new BPMInfo(Long.parseLong(infos[0]) * 1_000_000, lastBPM * 100 / getInitBPM()));
+            bpmInfos.add(new BPMInfo((long)Double.parseDouble(infos[0]) * 1_000_000, lastBPM * 100 / getInitBPM()));
             return;
         }
 
@@ -64,14 +64,14 @@ public class OsuMapInfo extends MapInfo {
             if (beatLength < 0) {
                 bpmInfos.add(new BPMInfo(Long.parseLong(infos[0]) * 1_000_000, (int) Math.round((-10_000) / beatLength)));
             } else {
-                lastBPM = 60_000 / Integer.parseInt(infos[1]);
+                lastBPM = 60_000 / (int)Double.parseDouble(infos[1]);
                 bpmInfos.add(new BPMInfo(Long.parseLong(infos[0]) * 1_000_000, lastBPM * 100 / getInitBPM()));
             }
         } else {
             if (beatLength < 0) {
                 lastBPMInfo.setBpm((int) Math.round((-10_000) / beatLength));
             } else {
-                lastBPM = 60_000 / Integer.parseInt(infos[1]);
+                lastBPM = 60_000 / (int)Double.parseDouble(infos[1]);
                 lastBPMInfo.setBpm(lastBPM * 100 / getInitBPM());
             }
         }

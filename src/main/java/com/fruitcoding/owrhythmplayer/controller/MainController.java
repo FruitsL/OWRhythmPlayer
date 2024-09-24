@@ -205,16 +205,16 @@ public class MainController {
             }
 
             File wavFile = AudioFileConverter.getInstance().getWavFile();
-            startTime = System.nanoTime();
             if(titleCheckBox.isSelected()) {
                 clipBoard.copyToClipBoard(musicSplitMenuButton.getText().substring(0, musicSplitMenuButton.getText().lastIndexOf('.')));
                 clipBoard.paste();
             }
+            startTime = System.nanoTime();
 
+            osuFile.getOsuMapInfo().playBPM(Long.parseLong(speakerDelayTextField3.getText()));
+            osuFile.getOsuMapInfo().playNote(Long.parseLong(speakerDelayTextField3.getText()));
             player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
             player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
-            osuFile.getOsuMapInfo().playNote(Long.parseLong(speakerDelayTextField3.getText()));
-            osuFile.getOsuMapInfo().playBPM(Long.parseLong(speakerDelayTextField3.getText()));
             Platform.runLater(() -> playButton.setText("중지")); // 다른 스레드에서도 동작시킬 수 있음
         } else if(player1.isPaused() || player2.isPaused()) {
             playing(1000, 1000);

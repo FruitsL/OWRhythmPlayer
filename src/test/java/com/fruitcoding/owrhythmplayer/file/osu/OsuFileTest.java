@@ -11,7 +11,7 @@ import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 
 class OsuFileTest {
     @Test
-    public void readContent() throws IOException, AWTException {
+    public void readContent() throws IOException, AWTException, InterruptedException {
         OsuFile oszFile = OsuFile.builder()
                 .filePath(STR."\{System.getProperty("user.dir")}/test/Kaneko Chiharu - INF-B L-aste-R (ML-ysg) [NOVICE].osu")
                 .build();

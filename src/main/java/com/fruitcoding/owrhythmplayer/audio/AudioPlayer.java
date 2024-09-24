@@ -44,14 +44,13 @@ public class AudioPlayer {
      * @param delay 시작 딜레이
      * @param volume 음악 볼륨
      */
-    public void play(long delay, float volume) {
-        long time = System.nanoTime();
+    public void play(long delay, float volume) { // TODO: 몇 곡 하다보면 음악 재생만 안되는 경우가 있음
         delay *= 1_000_000;
         if(audioClip != null && !audioClip.isRunning()) {
             setVolume(volume);
             while(System.nanoTime() - startTime < delay); // 정확한 실행을 위한 반복 (1ms 미만 오차)
             audioClip.start();
-            info(STR."Play time: \{System.nanoTime() - time}");
+            info(STR."Play time: \{System.nanoTime() - startTime}");
         } else {
             error("Not Playing");
         }
