@@ -11,6 +11,7 @@ import com.fruitcoding.owrhythmplayer.data.MainMap;
 import com.fruitcoding.owrhythmplayer.file.osu.OsuFile;
 import com.fruitcoding.owrhythmplayer.file.osu.OszFile;
 import com.fruitcoding.owrhythmplayer.map.osu.OsuMapInfo;
+import com.fruitcoding.owrhythmplayer.util.ClipBoard;
 import com.fruitcoding.owrhythmplayer.util.GlobalKeyMouseListener;
 import com.fruitcoding.owrhythmplayer.util.LoggerUtil;
 import it.sauronsoftware.jave.EncoderException;
@@ -52,19 +53,26 @@ public class MainController {
     private NumericTextField speakerDelayTextField1;
     @FXML @Getter
     private NumericTextField speakerDelayTextField2;
+    @FXML @Getter
+    private NumericTextField speakerDelayTextField3;
     @FXML
     private TooltipSlider speakerSlider1;
     @FXML
     private TooltipSlider speakerSlider2;
     @FXML
-    private Button playButton;
+    private Button playButton; // TODO: 중지버튼 눌렀을 때 일부 기능 중지안되는 문제 해결 필요
     @FXML
-    private Button stopButton; // TODO: 해당 변수 선언이 없어도 일시정지가 가능하다면 제거 예정
+    private Button pauseButton; // TODO: 일시정지 버튼 추가 필요
+    @FXML
+    private CheckBox titleCheckBox;
+    @FXML
+    private Checkbox bpmCheckBox;
 
     AudioPlayer player1;
     AudioPlayer player2;
     AudioDevice audioDevice;
     GlobalKeyMouseListener globalKeyMouseListener;
+    ClipBoard clipBoard;
 
     public static long startTime = 0L;
 
@@ -82,6 +90,9 @@ public class MainController {
 
         speakerDelayTextField1.setText(mainMap.getMap().get("speakerDelayTextField1"));
         speakerDelayTextField2.setText(mainMap.getMap().get("speakerDelayTextField2"));
+        speakerDelayTextField3.setText(mainMap.getMap().get("speakerDelayTextField3"));
+
+        titleCheckBox.setSelected(Boolean.parseBoolean(mainMap.getMap().get("titleCheckBox")));
 
         speakerSlider1.setValue(Double.parseDouble(mainMap.getMap().get("speakerSlider1")));
         speakerSlider1.addEventHandler(MouseEvent.MOUSE_RELEASED, _ -> mainMap.getMap().put("speakerSlider1", String.valueOf((int)speakerSlider1.getValue())));
@@ -108,6 +119,13 @@ public class MainController {
         if(audioDevice.getSourceMixerInfosNameList().contains(mainMap.getMap().get("speakerSplitMenuButton2"))) {
             speakerSplitMenuButton2.setText(mainMap.getMap().get("speakerSplitMenuButton2"));
             speakerSplitMenuButton2.setIndex(audioDevice.getSourceMixerInfosNameList().indexOf(mainMap.getMap().get("speakerSplitMenuButton2")));
+        }
+
+        try {
+            clipBoard = ClipBoard.getInstance();
+        } catch (AWTException e) {
+            error(STR."Failed to initialize clipboard.\n\{e}}");
+            throw new RuntimeException(e);
         }
 
         try {
@@ -175,7 +193,7 @@ public class MainController {
         if(player1 == null || player2 == null) { // TODO: 곡 재생이 완료된 뒤 다시 재생을 하면 중지가 아닌 재생이 시작되는지 확인 필요
             // osu 파일 설정
             boolean isOsu = musicSplitMenuButton.getText().endsWith("osu");
-            if(musicSplitMenuButton.getText().endsWith(".osu")) {
+            if(isOsu) {
                 osuFile = OsuFile.builder()
                         .filePath((String) musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()))
                         .build();
@@ -188,11 +206,15 @@ public class MainController {
 
             File wavFile = AudioFileConverter.getInstance().getWavFile();
             startTime = System.nanoTime();
+            if(titleCheckBox.isSelected()) {
+                clipBoard.copyToClipBoard(musicSplitMenuButton.getText().substring(0, musicSplitMenuButton.getText().lastIndexOf('.')));
+                clipBoard.paste();
+            }
 
             player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
             player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
-            osuFile.getOsuMapInfo().playNote(Long.parseLong(speakerDelayTextField1.getText()));
-            osuFile.getOsuMapInfo().playBPM(Long.parseLong(speakerDelayTextField1.getText()));
+            osuFile.getOsuMapInfo().playNote(Long.parseLong(speakerDelayTextField3.getText()));
+            osuFile.getOsuMapInfo().playBPM(Long.parseLong(speakerDelayTextField3.getText()));
             Platform.runLater(() -> playButton.setText("중지")); // 다른 스레드에서도 동작시킬 수 있음
         } else if(player1.isPaused() || player2.isPaused()) {
             playing(1000, 1000);

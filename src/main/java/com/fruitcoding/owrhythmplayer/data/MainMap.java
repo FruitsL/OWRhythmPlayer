@@ -32,11 +32,13 @@ public class MainMap extends JSONMap<String, String> {
         Map<String, String> map = new HashMap<>();
         map.put("speakerDelayTextField1", "1000");
         map.put("speakerDelayTextField2", "3000");
+        map.put("speakerDelayTextField3", "1000");
         map.put("speakerSlider1", "50");
         map.put("speakerSlider2", "50");
         map.put("speakerSplitMenuButton1", "없음");
         map.put("speakerSplitMenuButton2", "없음");
         map.put("musicSplitMenuButton", "없음");
+        map.put("titleCheckBox", "false");
         return map;
     }
 

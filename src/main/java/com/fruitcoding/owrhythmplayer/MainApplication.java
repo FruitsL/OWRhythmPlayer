@@ -28,7 +28,7 @@ public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException, NativeHookException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("main-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+        Scene scene = new Scene(fxmlLoader.load(), 400, 280);
         mainController = fxmlLoader.getController();
         stage.setTitle("Overwatch Rhythm Player");
         stage.setScene(scene);
