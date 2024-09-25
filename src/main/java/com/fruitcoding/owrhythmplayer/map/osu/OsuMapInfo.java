@@ -14,7 +14,8 @@ import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 import static java.util.Arrays.stream;
 
 public class OsuMapInfo extends MapInfo {
-    private int lastBPM = -1;
+    private int lastBPM = 100;
+    private int lastSpeed = 1;
     @Setter
     private int circleSize = 0;
 
@@ -48,32 +49,27 @@ public class OsuMapInfo extends MapInfo {
     }
 
     @Override
-    public void addBPMInfosByString(Object info) { // TODO: 변속 -> 속도 순서로 BPM 변경 시 변속이 씹히고 속도만 반영되는 문제 있음
+    public void addBPMInfosByString(Object info) {
         String[] infos = info.toString().split(",");
+        double beatLength = Double.parseDouble(infos[1]);
 
-        if(lastBPM < 0) {
-            setInitBPM((int)Math.round(60_000 / Double.parseDouble(infos[1])));
-            lastBPM = getInitBPM();
-            bpmInfos.add(new BPMInfo((long)Double.parseDouble(infos[0]) * 1_000_000, lastBPM * 100 / getInitBPM()));
-            return;
+        if(beatLength > 0) { // BPM
+            if(getInitBPM() == 0) { // 첫 번째 BPM
+                setInitBPM((int)Math.round(60_000 / beatLength));
+                lastBPM = getInitBPM();
+            } else {
+                lastBPM = (int)(60_000 / beatLength);
+                lastSpeed = 1;
+            }
+        } else { // Speed
+            lastSpeed = (int) Math.round((-100) / beatLength);
         }
 
         BPMInfo lastBPMInfo = ((LinkedList<BPMInfo>)bpmInfos).peekLast();
-        double beatLength = Double.parseDouble(infos[1]);
-        if((lastBPMInfo == null) || (Long.parseLong(infos[0]) * 1_000_000 - lastBPMInfo.getNanoTime() >= 5 * 1_000_000)) { // TODO: 코드 줄이기 필요
-            if (beatLength < 0) {
-                bpmInfos.add(new BPMInfo(Long.parseLong(infos[0]) * 1_000_000, (int) Math.round((-10_000) / beatLength)));
-            } else {
-                lastBPM = 60_000 / (int)Double.parseDouble(infos[1]);
-                bpmInfos.add(new BPMInfo(Long.parseLong(infos[0]) * 1_000_000, lastBPM * 100 / getInitBPM()));
-            }
-        } else {
-            if (beatLength < 0) {
-                lastBPMInfo.setBpm((int) Math.round((-10_000) / beatLength));
-            } else {
-                lastBPM = 60_000 / (int)Double.parseDouble(infos[1]);
-                lastBPMInfo.setBpm(lastBPM * 100 / getInitBPM());
-            }
+        if((lastBPMInfo == null) || (Long.parseLong(infos[0]) * 1_000_000 - lastBPMInfo.getNanoTime() >= 5 * 1_000_000)) { // 신규 BPM 추가
+            bpmInfos.add(new BPMInfo((long)Double.parseDouble(infos[0]) * 1_000_000, lastSpeed * lastBPM * 100 / getInitBPM()));
+        } else { // 기존 BPM 변경
+            lastBPMInfo.setBpm(lastSpeed * lastBPM * 100 / getInitBPM());
         }
     }
 }

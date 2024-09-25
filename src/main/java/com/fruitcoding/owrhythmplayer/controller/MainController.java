@@ -128,12 +128,12 @@ public class MainController {
             throw new RuntimeException(e);
         }
 
-//        try {
-//            globalKeyMouseListener = new GlobalKeyMouseListener(this);
-//        } catch (NativeHookException e) {
-//            error(STR."GlobalKeyMouseListener not working.\n\{e}");
-//            throw new RuntimeException(e);
-//        }
+        try {
+            globalKeyMouseListener = new GlobalKeyMouseListener(this);
+        } catch (NativeHookException e) {
+            error(STR."GlobalKeyMouseListener not working.\n\{e}");
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -142,6 +142,8 @@ public class MainController {
      */
     private void handleDragDropped(DragEvent event) {
         Dragboard db = event.getDragboard();
+        player1 = null;
+        player2 = null;
         if (db.hasFiles()) {
             List<File> files = db.getFiles();
             if(files.size() == 1) {
@@ -214,6 +216,7 @@ public class MainController {
             osuFile.getOsuMapInfo().playNote(Long.parseLong(speakerDelayTextField3.getText()));
             player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
             player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
+            info(STR."Start Time: \{startTime}");
             Platform.runLater(() -> playButton.setText("중지")); // 다른 스레드에서도 동작시킬 수 있음
         } else if(player1.isPaused() || player2.isPaused()) {
             playing(1000, 1000);
