@@ -128,12 +128,12 @@ public class MainController {
             throw new RuntimeException(e);
         }
 
-        try {
-            globalKeyMouseListener = new GlobalKeyMouseListener(this);
-        } catch (NativeHookException e) {
-            error(STR."GlobalKeyMouseListener not working.\n\{e}");
-            throw new RuntimeException(e);
-        }
+//        try {
+//            globalKeyMouseListener = new GlobalKeyMouseListener(this);
+//        } catch (NativeHookException e) {
+//            error(STR."GlobalKeyMouseListener not working.\n\{e}");
+//            throw new RuntimeException(e);
+//        }
     }
 
     /**
@@ -174,7 +174,6 @@ public class MainController {
                 }
             });
 
-            musicSplitMenuButton.setIndex(-1);
             info(musicFileMap);
             musicSplitMenuButton.setMap(musicFileMap);
             musicSplitMenuButton.setIndex(0);
@@ -250,8 +249,10 @@ public class MainController {
                 }
             });
             return newAudioPlayer;
+        } else {
+            error("Failed Player init.");
+            return null;
         }
-        return null;
     }
 
     public void playing(long d1, long d2) {
