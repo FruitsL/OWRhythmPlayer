@@ -2,17 +2,21 @@ package com.fruitcoding.owrhythmplayer.controller.settings;
 
 import com.fruitcoding.owrhythmplayer.data.json.HotKeyMap;
 import com.fruitcoding.owrhythmplayer.util.GlobalKeyMouseListener;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Map;
 
+import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.error;
 import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 
 
@@ -39,6 +43,17 @@ public class HotkeyController {
         }
     }
 
+    public void setStage(Stage stage) {
+        stage.setOnCloseRequest(event -> {
+            try {
+                onWindowClose(event);
+            } catch (IOException e) {
+                error(e);
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
     public void setGlobalKeyMouseListener(GlobalKeyMouseListener listener) {
         this.listener = listener;
     }
@@ -54,8 +69,19 @@ public class HotkeyController {
     }
 
     public void setKey(Button button, int keyCode) {
-        button.setText(KeyEvent.getKeyText(keyCode));
+        try {
+            HotKeyMap.getInstance().changeKeyCode(button.getId(), keyCode);
+            Platform.runLater(() -> button.setText(KeyEvent.getKeyText(keyCode)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         button.setStyle(null);
-        explainLabel.setText("버튼을 눌러 입력 키를 변경하세요.");
+        Platform.runLater(() -> explainLabel.setText("버튼을 눌러 입력 키를 변경하세요.")); // 다른 스레드에서도 동작시킬 수 있음
+    }
+
+    private void onWindowClose(WindowEvent event) throws IOException {
+        HotKeyMap hotKeyMap = HotKeyMap.getInstance();
+        hotKeyMap.mapToJSON();
+        hotKeyMap.refreshReverseMap();
     }
 }

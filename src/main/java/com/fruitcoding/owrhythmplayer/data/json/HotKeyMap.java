@@ -46,7 +46,10 @@ public class HotKeyMap extends JSONMap<Integer, String> {
             super.map = initMap();
             mapToJSON();
         }
+        refreshReverseMap();
+    }
 
+    public void refreshReverseMap() {
         reverseMap = this.map.entrySet().stream()
                 .collect(Collectors.toMap(
                         Map.Entry::getValue, Map.Entry::getKey

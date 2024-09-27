@@ -364,6 +364,8 @@ public class MainController {
         Scene scene = new Scene(root);
         newWindow.setScene(scene);
 
+        hotkeyController.setStage(newWindow);
+
         // 모달 창 띄우기
         newWindow.showAndWait();
     }

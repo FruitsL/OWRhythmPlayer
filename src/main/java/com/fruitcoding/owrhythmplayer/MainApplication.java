@@ -1,6 +1,7 @@
 package com.fruitcoding.owrhythmplayer;
 
 import com.fruitcoding.owrhythmplayer.controller.MainController;
+import com.fruitcoding.owrhythmplayer.data.json.HotKeyMap;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
