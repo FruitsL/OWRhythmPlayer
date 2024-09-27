@@ -1,18 +1,21 @@
-package com.fruitcoding.owrhythmplayer.data;
+package com.fruitcoding.owrhythmplayer.data.json;
+
+import lombok.Getter;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
-import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
+import java.util.stream.Collectors;
 
 /**
  * 단축키 저장 (Key: KeyCode, Value: 오버워치 버튼 영문명)
  */
 public class HotKeyMap extends JSONMap<Integer, String> {
     private static HotKeyMap instance;
+    @Getter
+    private Map<String, Integer> reverseMap;
 
     /**
      * 단축키가 저장된 파일 경로 가져오기
@@ -43,6 +46,11 @@ public class HotKeyMap extends JSONMap<Integer, String> {
             super.map = initMap();
             mapToJSON();
         }
+
+        reverseMap = this.map.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Map.Entry::getValue, Map.Entry::getKey
+                ));
     }
 
     /**
@@ -61,8 +69,8 @@ public class HotKeyMap extends JSONMap<Integer, String> {
         map.put(KeyEvent.VK_CONTROL, "CROUCH");
         map.put(KeyEvent.VK_V, "MELEE");
         map.put(KeyEvent.VK_R, "RELOAD");
-        map.put(KeyEvent.VK_F11, "PLAY");
-        map.put(KeyEvent.VK_F12, "STOP");
+        map.put(KeyEvent.VK_F11, "PLAY/STOP");
+        map.put(KeyEvent.VK_F12, "PAUSE");
         map.put(KeyEvent.VK_1, "WEAPON1");
         map.put(KeyEvent.VK_2, "WEAPON2");
         return map;
@@ -71,5 +79,11 @@ public class HotKeyMap extends JSONMap<Integer, String> {
     @Override
     public Map<Integer, String> getMap() {
         return super.getMap();
+    }
+
+    public void changeKeyCode(String button, int keyCode) {
+        map.remove(reverseMap.get(button));
+        reverseMap.put(button, keyCode);
+        map.put(keyCode, button);
     }
 }

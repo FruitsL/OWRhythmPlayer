@@ -1,18 +1,13 @@
 package com.fruitcoding.owrhythmplayer.map.base;
 
-import com.fruitcoding.owrhythmplayer.audio.AudioPlayer;
-import com.fruitcoding.owrhythmplayer.controller.MainController;
-import com.fruitcoding.owrhythmplayer.data.HotKeyMap;
+import com.fruitcoding.owrhythmplayer.data.json.HotKeyMap;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.fruitcoding.owrhythmplayer.controller.MainController.startTime;
 import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.*;
@@ -31,7 +26,7 @@ abstract public class MapInfo {
     public abstract void addNoteInfosByString(Object info);
     public abstract void addBPMInfosByString(Object info);
 
-    public Map<String, Integer> hotkeyMap;
+    public Map<String, Integer> reverseHotkeyMap;
     Map<Integer, Integer> numToKeyMap;
 
     /**
@@ -41,23 +36,20 @@ abstract public class MapInfo {
      */
     protected MapInfo() throws AWTException, IOException {
         robot = new Robot();
-        hotkeyMap = HotKeyMap.getInstance().getMap().entrySet().stream()
-                .collect(Collectors.toMap(
-                        Map.Entry::getValue, Map.Entry::getKey
-                ));
+        reverseHotkeyMap = HotKeyMap.getInstance().getReverseMap();
         numToKeyMap = new HashMap<>();
-        numToKeyMap.put(0, Math.abs(hotkeyMap.get("PRIMARY_FIRE")));
-        numToKeyMap.put(1, Math.abs(hotkeyMap.get("SECONDARY_FIRE")));
-        numToKeyMap.put(2, hotkeyMap.get("ABILITY_1"));
-        numToKeyMap.put(3, hotkeyMap.get("ABILITY_2"));
-        numToKeyMap.put(4, hotkeyMap.get("ULTIMATE"));
-        numToKeyMap.put(5, hotkeyMap.get("INTERACT"));
-        numToKeyMap.put(6, hotkeyMap.get("JUMP"));
-        numToKeyMap.put(7, hotkeyMap.get("CROUCH"));
-        numToKeyMap.put(8, hotkeyMap.get("MELEE"));
-        numToKeyMap.put(9, hotkeyMap.get("RELOAD"));
-        numToKeyMap.put(10, hotkeyMap.get("WEAPON1"));
-        numToKeyMap.put(11, hotkeyMap.get("WEAPON2"));
+        numToKeyMap.put(0, Math.abs(reverseHotkeyMap.get("PRIMARY_FIRE")));
+        numToKeyMap.put(1, Math.abs(reverseHotkeyMap.get("SECONDARY_FIRE")));
+        numToKeyMap.put(2, reverseHotkeyMap.get("ABILITY_1"));
+        numToKeyMap.put(3, reverseHotkeyMap.get("ABILITY_2"));
+        numToKeyMap.put(4, reverseHotkeyMap.get("ULTIMATE"));
+        numToKeyMap.put(5, reverseHotkeyMap.get("INTERACT"));
+        numToKeyMap.put(6, reverseHotkeyMap.get("JUMP"));
+        numToKeyMap.put(7, reverseHotkeyMap.get("CROUCH"));
+        numToKeyMap.put(8, reverseHotkeyMap.get("MELEE"));
+        numToKeyMap.put(9, reverseHotkeyMap.get("RELOAD"));
+        numToKeyMap.put(10, reverseHotkeyMap.get("WEAPON1"));
+        numToKeyMap.put(11, reverseHotkeyMap.get("WEAPON2"));
     }
 
     /**
@@ -90,7 +82,7 @@ abstract public class MapInfo {
 
     public void stopNote() {
         isNotePlay = false;
-        hotkeyMap.values().forEach(v -> {
+        reverseHotkeyMap.values().forEach(v -> {
             info(STR."hotkeyMap Release: \{v}");
             if(v >= 0)
                 robot.keyRelease(v);

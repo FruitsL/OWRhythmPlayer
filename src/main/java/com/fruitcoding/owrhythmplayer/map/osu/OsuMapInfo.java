@@ -1,5 +1,6 @@
 package com.fruitcoding.owrhythmplayer.map.osu;
 
+import com.fruitcoding.owrhythmplayer.data.enums.Line;
 import com.fruitcoding.owrhythmplayer.map.base.BPMInfo;
 import com.fruitcoding.owrhythmplayer.map.base.MapInfo;
 import com.fruitcoding.owrhythmplayer.map.base.NoteInfo;
@@ -18,13 +19,6 @@ public class OsuMapInfo extends MapInfo {
     private int lastSpeed = 1;
     @Setter
     private int circleSize = 0;
-
-    Map<Integer, String> lineMap = Map.of(
-            0, "ABILITY_1",
-            1, "CROUCH",
-            2, "JUMP",
-            3, "MELEE"
-    );
     /**
      * 로봇 생성
      *
@@ -40,11 +34,11 @@ public class OsuMapInfo extends MapInfo {
         String[] infos = info.toString().split(",");
         String[] additionInfos = infos[5].split(":");
 
-        noteInfos.add( new NoteInfo(Long.parseLong(infos[2]) * 1_000_000, true, hotkeyMap.get(lineMap.get(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2))) ); // 현재는 라인 위치를 keyCode로 넣었지만 추후엔 라인 위치 기준 KeyCode로 변경해야함
+        noteInfos.add( new NoteInfo(Long.parseLong(infos[2]) * 1_000_000, true, reverseHotkeyMap.get(Line.fromCode(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2).getKeyName())) );
         if(Integer.parseInt(additionInfos[0]) > 10) {
-            noteInfos.add( new NoteInfo(Long.parseLong(additionInfos[0]) * 1_000_000 - 1_000, false, hotkeyMap.get(lineMap.get(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2))) );
+            noteInfos.add( new NoteInfo(Long.parseLong(additionInfos[0]) * 1_000_000 - 1_000, false, reverseHotkeyMap.get(Line.fromCode(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2).getKeyName())) );
         } else {
-            noteInfos.add( new NoteInfo(Long.parseLong(infos[2]) * 1_000_000 + 1_000, false, hotkeyMap.get(lineMap.get(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2))) ); // 1ms 뒤에 떼기
+            noteInfos.add( new NoteInfo(Long.parseLong(infos[2]) * 1_000_000 + 1_000, false, reverseHotkeyMap.get(Line.fromCode(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2).getKeyName())) ); // 1ms 뒤에 떼기
         }
     }
 

@@ -1,4 +1,4 @@
-package com.fruitcoding.owrhythmplayer.data;
+package com.fruitcoding.owrhythmplayer.data.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;

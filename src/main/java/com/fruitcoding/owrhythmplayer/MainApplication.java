@@ -1,10 +1,6 @@
 package com.fruitcoding.owrhythmplayer;
 
-import com.fruitcoding.owrhythmplayer.audio.AudioDevice;
 import com.fruitcoding.owrhythmplayer.controller.MainController;
-import com.fruitcoding.owrhythmplayer.data.JSONMap;
-import com.fruitcoding.owrhythmplayer.data.MainMap;
-import com.fruitcoding.owrhythmplayer.util.GlobalKeyMouseListener;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,9 +9,6 @@ import javafx.stage.Stage;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.Map;
 

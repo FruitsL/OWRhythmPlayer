@@ -1,8 +1,10 @@
 package com.fruitcoding.owrhythmplayer.util;
 
 import com.fruitcoding.owrhythmplayer.controller.MainController;
-import com.fruitcoding.owrhythmplayer.data.HotKeyMap;
+import com.fruitcoding.owrhythmplayer.controller.settings.HotkeyController;
+import com.fruitcoding.owrhythmplayer.data.json.HotKeyMap;
 import lombok.Getter;
+import lombok.Setter;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.logging.LogManager;
 import java.util.stream.Collectors;
+import javafx.scene.control.Button;
 
 import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.*;
 
@@ -32,6 +35,10 @@ public class GlobalKeyMouseListener extends SwingKeyAdapter {
             2, 3, // Middle
             3, 2 // Right
     );
+    @Setter
+    private Button button = null;
+    @Setter
+    private HotkeyController hotkeyController = null;
 
     public Map<Integer, Boolean> resetKeyPressedMap() {
         return hotKeyMap.getMap().entrySet()
@@ -53,6 +60,16 @@ public class GlobalKeyMouseListener extends SwingKeyAdapter {
             public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
                 int keyCode = getJavaKeyEvent(nativeKeyEvent).getKeyCode();
                 debug(STR."Pressed: \{keyCode}");
+
+                if(hotkeyController != null) { // 키 변경
+                    if(hotKeyMap.getMap().containsKey(keyCode))
+                        return;
+                    hotkeyController.setKey(button, keyCode);
+                    hotkeyController = null;
+                    button = null;
+                    return;
+                }
+
                 if(!keyPressedMap.containsKey(keyCode))
                     return;
                 if(keyPressedMap.get(keyCode))
@@ -60,8 +77,8 @@ public class GlobalKeyMouseListener extends SwingKeyAdapter {
 
                 keyPressedMap.replace(keyCode, true);
                 switch(hotKeyMap.getMap().get(keyCode)) {
-                    case "PLAY":
-                        info("Button: PLAY");
+                    case "PLAY/STOP":
+                        info("Button: PLAY/STOP");
                         try {
                             mainController.onPlayButtonClick();
                         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
@@ -70,8 +87,8 @@ public class GlobalKeyMouseListener extends SwingKeyAdapter {
                             throw new RuntimeException(e);
                         }
                         break;
-                    case "STOP":
-                        info("Button: STOP");
+                    case "PAUSE":
+                        info("Button: PAUSE");
                         mainController.onPauseButtonClick();
                         break;
                     default:

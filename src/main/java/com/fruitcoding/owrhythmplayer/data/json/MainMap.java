@@ -1,7 +1,5 @@
-package com.fruitcoding.owrhythmplayer.data;
+package com.fruitcoding.owrhythmplayer.data.json;
 
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
