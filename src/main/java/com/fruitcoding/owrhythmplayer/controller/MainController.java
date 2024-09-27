@@ -62,7 +62,7 @@ public class MainController {
     private TooltipSlider speakerSlider2;
     @FXML
     private Button playButton;
-    @FXML
+    @FXML @Getter
     private CheckBox titleCheckBox;
 
     AudioPlayer player1;
@@ -391,5 +391,10 @@ public class MainController {
 
         // 모달 창 띄우기
         newWindow.showAndWait();
+    }
+
+    @FXML
+    private void openMacroSetting() {
+
     }
 }

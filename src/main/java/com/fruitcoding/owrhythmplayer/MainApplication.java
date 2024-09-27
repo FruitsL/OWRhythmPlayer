@@ -43,6 +43,7 @@ public class MainApplication extends Application {
             mainMap.put("speakerDelayTextField3", mainController.getSpeakerDelayTextField3().getText());
             mainMap.put("speakerSplitMenuButton1", mainController.getSpeakerSplitMenuButton1().getText());
             mainMap.put("speakerSplitMenuButton2", mainController.getSpeakerSplitMenuButton2().getText());
+            mainMap.put("titleCheckBox", String.valueOf(mainController.getTitleCheckBox().isSelected()));
 
             mainController.getMainMap().mapToJSON();
         } catch (IOException e) {
