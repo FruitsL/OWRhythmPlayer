@@ -1,6 +1,5 @@
 package com.fruitcoding.owrhythmplayer.map.osu;
 
-import com.fruitcoding.owrhythmplayer.data.enums.Line;
 import com.fruitcoding.owrhythmplayer.map.base.BPMInfo;
 import com.fruitcoding.owrhythmplayer.map.base.MapInfo;
 import com.fruitcoding.owrhythmplayer.map.base.NoteInfo;
@@ -19,6 +18,13 @@ public class OsuMapInfo extends MapInfo {
     private int lastSpeed = 1;
     @Setter
     private int circleSize = 0;
+
+    Map<Integer, String> lineMap = Map.of(
+            0, "ABILITY_1",
+            1, "CROUCH",
+            2, "JUMP",
+            3, "MELEE"
+    );
     /**
      * 로봇 생성
      *
@@ -61,9 +67,9 @@ public class OsuMapInfo extends MapInfo {
 
         BPMInfo lastBPMInfo = ((LinkedList<BPMInfo>)bpmInfos).peekLast();
         if((lastBPMInfo == null) || (Long.parseLong(infos[0]) * 1_000_000 - lastBPMInfo.getNanoTime() >= 5 * 1_000_000)) { // 신규 BPM 추가
-            bpmInfos.add(new BPMInfo((long)Double.parseDouble(infos[0]) * 1_000_000, lastSpeed * lastBPM * 100 / getInitBPM()));
+            bpmInfos.add(new BPMInfo((long)Double.parseDouble(infos[0]) * 1_000_000, 1 + lastSpeed * lastBPM * 100 / getInitBPM()));
         } else { // 기존 BPM 변경
-            lastBPMInfo.setBpm(lastSpeed * lastBPM * 100 / getInitBPM());
+            lastBPMInfo.setBpm(1 + lastSpeed * lastBPM * 100 / getInitBPM());
         }
     }
 }
