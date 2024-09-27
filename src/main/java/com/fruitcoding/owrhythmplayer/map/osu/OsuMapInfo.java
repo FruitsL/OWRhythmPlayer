@@ -1,5 +1,6 @@
 package com.fruitcoding.owrhythmplayer.map.osu;
 
+import com.fruitcoding.owrhythmplayer.data.enums.Line;
 import com.fruitcoding.owrhythmplayer.map.base.BPMInfo;
 import com.fruitcoding.owrhythmplayer.map.base.MapInfo;
 import com.fruitcoding.owrhythmplayer.map.base.NoteInfo;
