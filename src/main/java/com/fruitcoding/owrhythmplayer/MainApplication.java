@@ -1,6 +1,10 @@
 package com.fruitcoding.owrhythmplayer;
 
+import com.fruitcoding.owrhythmplayer.audio.AudioDevice;
 import com.fruitcoding.owrhythmplayer.controller.MainController;
+import com.fruitcoding.owrhythmplayer.data.JSONMap;
+import com.fruitcoding.owrhythmplayer.data.MainMap;
+import com.fruitcoding.owrhythmplayer.util.GlobalKeyMouseListener;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,6 +13,9 @@ import javafx.stage.Stage;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 
+import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.Map;
 
@@ -40,6 +47,7 @@ public class MainApplication extends Application {
             Map<String, String> mainMap = mainController.getMainMap().getMap();
             mainMap.put("speakerDelayTextField1", mainController.getSpeakerDelayTextField1().getText());
             mainMap.put("speakerDelayTextField2", mainController.getSpeakerDelayTextField2().getText());
+            mainMap.put("speakerDelayTextField3", mainController.getSpeakerDelayTextField3().getText());
             mainMap.put("speakerSplitMenuButton1", mainController.getSpeakerSplitMenuButton1().getText());
             mainMap.put("speakerSplitMenuButton2", mainController.getSpeakerSplitMenuButton2().getText());
 
