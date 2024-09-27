@@ -1,33 +1,31 @@
 package com.fruitcoding.owrhythmplayer.controller;
 
+import com.fruitcoding.owrhythmplayer.MainApplication;
 import com.fruitcoding.owrhythmplayer.audio.AudioDevice;
 import com.fruitcoding.owrhythmplayer.audio.AudioFileConverter;
 import com.fruitcoding.owrhythmplayer.audio.AudioPlayer;
 import com.fruitcoding.owrhythmplayer.controller.component.MapSplitMenuButton;
 import com.fruitcoding.owrhythmplayer.controller.component.NumericTextField;
 import com.fruitcoding.owrhythmplayer.controller.component.TooltipSlider;
-import com.fruitcoding.owrhythmplayer.controller.settings.HotkeyController;
-import com.fruitcoding.owrhythmplayer.controller.settings.SettingController;
-import com.fruitcoding.owrhythmplayer.data.json.MainMap;
-import com.fruitcoding.owrhythmplayer.data.json.SettingMap;
+import com.fruitcoding.owrhythmplayer.data.MainMap;
 import com.fruitcoding.owrhythmplayer.file.osu.OsuFile;
 import com.fruitcoding.owrhythmplayer.file.osu.OszFile;
+import com.fruitcoding.owrhythmplayer.map.osu.OsuMapInfo;
 import com.fruitcoding.owrhythmplayer.util.ClipBoard;
 import com.fruitcoding.owrhythmplayer.util.GlobalKeyMouseListener;
+import com.fruitcoding.owrhythmplayer.util.LoggerUtil;
+import it.sauronsoftware.jave.EncoderException;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
+import javafx.scene.input.TransferMode;
+import javafx.scene.layout.VBox;
 import lombok.Getter;
 import org.jnativehook.NativeHookException;
 
@@ -35,11 +33,12 @@ import javax.sound.sampled.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.*;
 
@@ -61,7 +60,6 @@ public class MainController {
     @FXML
     private TooltipSlider speakerSlider2;
     @FXML
-    private Button playButton;
     @FXML
     private CheckBox titleCheckBox;
     @FXML
@@ -77,7 +75,6 @@ public class MainController {
 
     @Getter
     private MainMap mainMap;
-    private SettingMap settingMap;
     private OsuFile osuFile;
 
     /**
@@ -87,13 +84,13 @@ public class MainController {
     @FXML
     public void initialize() throws IOException {
         mainMap = new MainMap();
-        settingMap = SettingMap.getInstance();
 
         speakerDelayTextField1.setText(mainMap.getMap().get("speakerDelayTextField1"));
         speakerDelayTextField2.setText(mainMap.getMap().get("speakerDelayTextField2"));
         speakerDelayTextField3.setText(mainMap.getMap().get("speakerDelayTextField3"));
 
         titleCheckBox.setSelected(Boolean.parseBoolean(mainMap.getMap().get("titleCheckBox")));
+        titleCheckBox.setOnAction(_ -> mainMap.getMap().put("titleCheckBox", String.valueOf(titleCheckBox.isSelected())));
 
         speakerSlider1.setValue(Double.parseDouble(mainMap.getMap().get("speakerSlider1")));
         speakerSlider1.addEventHandler(MouseEvent.MOUSE_RELEASED, _ -> mainMap.getMap().put("speakerSlider1", String.valueOf((int)speakerSlider1.getValue())));
@@ -129,13 +126,6 @@ public class MainController {
             throw new RuntimeException(e);
         }
 
-        if(System.getProperty("os.name").toLowerCase().contains("window")) { // Windows인 경우에만 사용
-            try {
-                globalKeyMouseListener = new GlobalKeyMouseListener(this);
-            } catch (NativeHookException e) {
-                error(STR."GlobalKeyMouseListener not working.\n\{e}");
-                throw new RuntimeException(e);
-            }
         }
     }
 
@@ -203,8 +193,6 @@ public class MainController {
                         .build();
                 AudioFileConverter.getInstance().convertToWAV(STR."\{Paths.get(osuFile.getFile().getAbsolutePath()).getParent()}/\{osuFile.getAudioFileName()}");
 
-                if(Boolean.parseBoolean(settingMap.getMap().get("bpmCheckBox")))
-                    osuFile.getOsuMapInfo().inputBPM();
             } else {
                 AudioFileConverter.getInstance().convertToWAV((String) musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()));
             }
@@ -215,9 +203,12 @@ public class MainController {
                 clipBoard.paste();
             }
             startTime = System.nanoTime();
-            if(Boolean.parseBoolean(settingMap.getMap().get("bpmCheckBox")))
+
+            if(isOsu) {
                 osuFile.getOsuMapInfo().playBPM(Long.parseLong(speakerDelayTextField3.getText()));
             osuFile.getOsuMapInfo().playNote(Long.parseLong(speakerDelayTextField3.getText()));
+                osuFile.getOsuMapInfo().playNote(Long.parseLong(speakerDelayTextField3.getText()));
+            }
             player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
             player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
             info(STR."Start Time: \{startTime}");
@@ -319,77 +310,5 @@ public class MainController {
         } else {
             playing(1_000, 1_000); // TODO: 현재는 1초로 고정되어있으나 추후 설정으로 시간이 변경 가능하도록 기능 추가 예정
         }
-    }
-
-    /**
-     * 메뉴의 아이템 클릭 시 해당 아이템의 id에 맞는 웹사이트 호출
-     * @param event 메서드 호출한 MenuItem
-     */
-    @FXML
-    public void openURI(ActionEvent event) {
-        try {
-            switch(((MenuItem)event.getSource()).getId()) {
-                case "sourceCode":
-                    Desktop.getDesktop().browse(new URI("https://github.com/FruitsL/OWRhythmPlayer"));
-                    break;
-                case "recentFile":
-                    Desktop.getDesktop().browse(new URI("https://drive.google.com/file/d/11thazR64Tdlm1pOnwoxinmPdv0j0lKt6/view?usp=sharing"));
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception e) {
-            error(e);
-        }
-    }
-
-    @FXML
-    private void openHotkeySetting() throws IOException {
-        // FXML 파일 로드
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/fruitcoding/owrhythmplayer/settings/hotkey-view.fxml"));
-        Parent root = fxmlLoader.load();
-
-        HotkeyController hotkeyController = fxmlLoader.getController();
-        hotkeyController.setGlobalKeyMouseListener(globalKeyMouseListener);
-
-        // 새로운 Stage 생성
-        Stage newWindow = new Stage();
-        newWindow.setTitle("단축키 설정");
-
-        // 새로운 창을 모달 창으로 설정
-        newWindow.initModality(Modality.APPLICATION_MODAL);
-        newWindow.setResizable(false);
-
-        // FXML 파일로부터 로드한 Scene 설정
-        Scene scene = new Scene(root);
-        newWindow.setScene(scene);
-
-        // 모달 창 띄우기
-        newWindow.showAndWait();
-    }
-
-    @FXML
-    private void openProgramSetting() throws IOException {
-        // FXML 파일 로드
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/fruitcoding/owrhythmplayer/settings/setting-view.fxml"));
-        Parent root = fxmlLoader.load();
-
-        // 새로운 Stage 생성
-        Stage newWindow = new Stage();
-        newWindow.setTitle("프로그램 설정");
-
-        // 새로운 창을 모달 창으로 설정
-        newWindow.initModality(Modality.APPLICATION_MODAL);
-        newWindow.setResizable(false);
-
-        // FXML 파일로부터 로드한 Scene 설정
-        Scene scene = new Scene(root);
-        newWindow.setScene(scene);
-
-        SettingController settingController = fxmlLoader.getController();
-        settingController.setStage(newWindow);
-
-        // 모달 창 띄우기
-        newWindow.showAndWait();
     }
 }
