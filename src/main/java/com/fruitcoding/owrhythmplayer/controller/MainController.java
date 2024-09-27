@@ -213,9 +213,11 @@ public class MainController {
                 clipBoard.paste();
             }
             startTime = System.nanoTime();
-            if(Boolean.parseBoolean(settingMap.getMap().get("bpmCheckBox")))
-                osuFile.getOsuMapInfo().playBPM(Long.parseLong(speakerDelayTextField3.getText()));
-            osuFile.getOsuMapInfo().playNote(Long.parseLong(speakerDelayTextField3.getText()));
+            if(isOsu) {
+                if(Boolean.parseBoolean(settingMap.getMap().get("bpmCheckBox")))
+                    osuFile.getOsuMapInfo().playBPM(Long.parseLong(speakerDelayTextField3.getText()));
+                osuFile.getOsuMapInfo().playNote(Long.parseLong(speakerDelayTextField3.getText()));
+            }
             player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
             player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
             info(STR."Start Time: \{startTime}");
