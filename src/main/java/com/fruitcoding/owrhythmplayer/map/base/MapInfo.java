@@ -92,7 +92,7 @@ abstract public class MapInfo {
     /**
      * BPM 변환 재생
      */
-    public void playBPM(long initDelay) {
+    public void playBPM(long initDelay) { // TODO: 변속 많은 채보 실행 후 노래와 변속이 안나오는 증상이 있음
         isNotePlay = true;
         new Thread(() -> {
             long delay = initDelay * 1_000_000;
@@ -105,17 +105,12 @@ abstract public class MapInfo {
                     return;
 
                 info(STR."BPM 변경 : \{weapon}");
-                if(weapon) { // TODO: 제대로 변속 안바뀌는 증상 있음
+                if(weapon) {
                     pressKey(robot, numToKeyMap.get(10));
                     weapon = false;
                 } else {
                     pressKey(robot, numToKeyMap.get(11));
                     weapon = true;
-                }
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
                 }
             }
         }).start();

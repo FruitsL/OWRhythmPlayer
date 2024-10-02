@@ -145,6 +145,7 @@ public class MainController {
         Dragboard db = event.getDragboard();
         player1 = null;
         player2 = null;
+        osuFile = null;
         if (db.hasFiles()) {
             List<File> files = db.getFiles();
             if(files.size() == 1) {
@@ -192,41 +193,41 @@ public class MainController {
      */
     @FXML
     public void onPlayButtonClick() throws UnsupportedAudioFileException, LineUnavailableException, IOException, AWTException {
-        if(player1 == null || player2 == null) { // TODO: 곡 재생이 완료된 뒤 다시 재생을 하면 중지가 아닌 재생이 시작되는지 확인 필요
+        if (startTime == 0) { // TODO: 곡 재생이 완료된 뒤 다시 재생을 하면 중지가 아닌 재생이 시작되는지 확인 필요
             // osu 파일 설정
             boolean isOsu = musicSplitMenuButton.getText().endsWith("osu");
-            if(isOsu) {
+            if (isOsu) {
                 osuFile = OsuFile.builder()
                         .filePath((String) musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()))
                         .build();
                 AudioFileConverter.getInstance().convertToWAV(STR."\{Paths.get(osuFile.getFile().getAbsolutePath()).getParent()}/\{osuFile.getAudioFileName()}");
 
-                if(Boolean.parseBoolean(settingMap.getMap().get("bpmCheckBox")))
+                if (Boolean.parseBoolean(settingMap.getMap().get("bpmCheckBox")))
                     osuFile.getOsuMapInfo().inputBPM();
             } else {
                 AudioFileConverter.getInstance().convertToWAV((String) musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()));
             }
 
             File wavFile = AudioFileConverter.getInstance().getWavFile();
-            if(titleCheckBox.isSelected()) {
+            if (titleCheckBox.isSelected()) {
                 clipBoard.copyToClipBoard(musicSplitMenuButton.getText().substring(0, musicSplitMenuButton.getText().lastIndexOf('.')));
                 clipBoard.paste();
             }
             startTime = System.nanoTime();
-            if(isOsu) {
-                if(Boolean.parseBoolean(settingMap.getMap().get("bpmCheckBox")))
+            if (isOsu) {
+                if (Boolean.parseBoolean(settingMap.getMap().get("bpmCheckBox")))
                     osuFile.getOsuMapInfo().playBPM(Long.parseLong(speakerDelayTextField3.getText()));
                 osuFile.getOsuMapInfo().playNote(Long.parseLong(speakerDelayTextField3.getText()));
             }
-            player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float)speakerSlider1.getValue());
-            player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float)speakerSlider2.getValue());
+            player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float) speakerSlider1.getValue());
+            player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float) speakerSlider2.getValue());
             info(STR."Start Time: \{startTime}");
             Platform.runLater(() -> playButton.setText("중지")); // 다른 스레드에서도 동작시킬 수 있음
-        } else if(player1.isPaused() || player2.isPaused()) {
-            playing(1000, 1000);
-        } else if(player1.isPlaying() || player2.isPlaying()) {
+        } else if(startTime > 0) {
             stop();
             Platform.runLater(() -> playButton.setText("재생")); // 다른 스레드에서도 동작시킬 수 있음
+        }else if(player1.isPaused() || player2.isPaused()) {
+            playing(1000, 1000);
         }
     }
 
@@ -290,18 +291,13 @@ public class MainController {
      * 재생 중인 음악을 중지
      */
     public void stop() {
-        if(player1 != null) {
+        if(player1 != null)
             player1.stop();
-            player1 = null;
-        }
-        if(player2 != null) {
+        if(player2 != null)
             player2.stop();
-            player2 = null;
-        }
-        if(osuFile != null) {
+        if(osuFile != null)
             osuFile.getOsuMapInfo().stopNote();
-            osuFile = null;
-        }
+        startTime = 0L;
     }
 
     /**
