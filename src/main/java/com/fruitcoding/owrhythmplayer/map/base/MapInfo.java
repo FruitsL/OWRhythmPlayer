@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.InputEvent;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.locks.LockSupport;
 
 import static com.fruitcoding.owrhythmplayer.controller.MainController.startTime;
 import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.*;
@@ -60,11 +61,22 @@ abstract public class MapInfo {
         new Thread(() -> {
             long delay = initDelay * 1_000_000;
             info(STR."Note time: \{System.nanoTime() - startTime}, Queue Size: \{noteInfos.size()}");
+            long delayLeft = 0;
             while(!noteInfos.isEmpty() && isNotePlay) {
                 NoteInfo noteInfo = noteInfos.poll();
                 if(noteInfo == null)
                     return;
-                while(noteInfo.nanoTime() + startTime + delay > System.nanoTime());
+                do {
+                    delayLeft = noteInfo.nanoTime() + startTime + delay - System.nanoTime();
+                    if(delayLeft > 1_000_000) {
+                        LockSupport.parkNanos(delayLeft - 1_000_000);
+                    } else if(delayLeft > 10_000) {
+                        // 짧은 주기로 대기 (정확도 높임)
+                        LockSupport.parkNanos(delayLeft - 10_000);  // 10 마이크로초 대기
+                    } else {
+                        Thread.onSpinWait();  // CPU 친화적인 스핀 대기
+                    }
+                } while(delayLeft > 0);
 
                 debug(STR."\{noteInfo.nanoTime()}, \{noteInfo.keyCode()}, \{noteInfo.isPress()}");
 
