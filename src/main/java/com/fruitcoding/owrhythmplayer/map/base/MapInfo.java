@@ -39,8 +39,8 @@ abstract public class MapInfo {
         robot = new Robot();
         reverseHotkeyMap = HotKeyMap.getInstance().getReverseMap();
         numToKeyMap = new HashMap<>();
-        numToKeyMap.put(0, Math.abs(reverseHotkeyMap.get("PRIMARY_FIRE")));
-        numToKeyMap.put(1, Math.abs(reverseHotkeyMap.get("SECONDARY_FIRE")));
+        numToKeyMap.put(0, reverseHotkeyMap.get("PRIMARY_FIRE"));
+        numToKeyMap.put(1, reverseHotkeyMap.get("SECONDARY_FIRE"));
         numToKeyMap.put(2, reverseHotkeyMap.get("ABILITY_1"));
         numToKeyMap.put(3, reverseHotkeyMap.get("ABILITY_2"));
         numToKeyMap.put(4, reverseHotkeyMap.get("ULTIMATE"));
@@ -144,10 +144,7 @@ abstract public class MapInfo {
             for(int i = num.length() - 1; i >= 0; i--) { // TODO: BPM이 매우 크면 가장 작은 값이 무시되는지 확인 필요
                 if(num.charAt(i) == '1') {
                     info(STR."Press: \{numToKeyMap.get(i)}");
-                    if(i < 2)
-                        robot.mousePress(InputEvent.getMaskForButton(numToKeyMap.get(i)));
-                    else
-                        robot.keyPress(numToKeyMap.get(i));
+                    robot.keyPress(numToKeyMap.get(i));
                 }
             }
             try {
@@ -158,10 +155,7 @@ abstract public class MapInfo {
             for(int i = num.length() - 1; i >= 0; i--) {
                 if (num.charAt(i) == '1') {
                     info(STR."Release: \{numToKeyMap.get(i)}");
-                    if (i < 2)
-                        robot.mouseRelease(InputEvent.getMaskForButton(numToKeyMap.get(i)));
-                    else
-                        robot.keyRelease(numToKeyMap.get(i));
+                    robot.keyRelease(numToKeyMap.get(i));
                 }
             }
             try {
@@ -177,10 +171,5 @@ abstract public class MapInfo {
     private void pressKey(Robot robot, int keyCode) {
         robot.keyPress(keyCode);
         robot.keyRelease(keyCode);
-    }
-
-    private void pressMouse(Robot robot, int mouseCode) {
-        robot.mousePress(InputEvent.getMaskForButton(mouseCode));
-        robot.mouseRelease(InputEvent.getMaskForButton(mouseCode));
     }
 }

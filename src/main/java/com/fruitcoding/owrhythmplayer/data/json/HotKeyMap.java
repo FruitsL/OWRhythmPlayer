@@ -62,8 +62,8 @@ public class HotKeyMap extends JSONMap<Integer, String> {
      */
     private Map<Integer, String> initMap() {
         Map<Integer, String> map = new HashMap<>();
-        map.put(MouseEvent.BUTTON1 * -1, "PRIMARY_FIRE");
-        map.put(MouseEvent.BUTTON3 * -1, "SECONDARY_FIRE");
+        map.put(KeyEvent.VK_F2, "PRIMARY_FIRE");
+        map.put(KeyEvent.VK_F7, "SECONDARY_FIRE");
         map.put(KeyEvent.VK_SHIFT, "ABILITY_1");
         map.put(KeyEvent.VK_E, "ABILITY_2");
         map.put(KeyEvent.VK_Q, "ULTIMATE");

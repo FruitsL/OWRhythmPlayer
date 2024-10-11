@@ -9,7 +9,10 @@ public enum Line {
     ABILITY_1(0, "ABILITY_1"),
     CROUCH(1, "CROUCH"),
     JUMP(2, "JUMP"),
-    MELEE(3, "MELEE");
+    MELEE(3, "MELEE"),
+    SECONDARY_FIRE(4, "SECONDARY_FIRE"),
+    PRIMARY_FIRE(5, "PRIMARY_FIRE"),
+    INTERACT(6, "INTERACT");
 
     // 필드 선언
     private final int keyCode;

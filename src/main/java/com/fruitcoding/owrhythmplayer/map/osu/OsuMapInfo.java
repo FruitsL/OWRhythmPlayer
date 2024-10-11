@@ -20,12 +20,6 @@ public class OsuMapInfo extends MapInfo {
     @Setter
     private int circleSize = 0;
 
-    Map<Integer, String> lineMap = Map.of(
-            0, "ABILITY_1",
-            1, "CROUCH",
-            2, "JUMP",
-            3, "MELEE"
-    );
     /**
      * 로봇 생성
      *
