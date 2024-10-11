@@ -148,7 +148,7 @@ abstract public class MapInfo {
                 }
             }
             try {
-                Thread.sleep(100); // robot.delay는 사용 불가
+                Thread.sleep(20); // robot.delay는 사용 불가
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -159,7 +159,7 @@ abstract public class MapInfo {
                 }
             }
             try {
-                Thread.sleep(200);
+                Thread.sleep(30);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
