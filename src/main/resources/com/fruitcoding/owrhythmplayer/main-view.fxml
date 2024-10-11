@@ -21,7 +21,7 @@
                 <Menu mnemonicParsing="false" text="설정">
                     <MenuItem mnemonicParsing="false" text="프로그램 설정" onAction="#openProgramSetting"/>
                     <MenuItem mnemonicParsing="false" text="조작법 변경" onAction="#openHotkeySetting"/>
-                    <MenuItem mnemonicParsing="false" text="단축키 설정" onAction="#openMacroSetting"/>
+                    <!--MenuItem mnemonicParsing="false" text="단축키 설정" onAction="#openMacroSetting"/-->
                 </Menu>
                 <Menu mnemonicParsing="false" text="도움말">
                     <MenuItem mnemonicParsing="false" text="사용 설명서"/>
