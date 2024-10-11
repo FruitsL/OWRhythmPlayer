@@ -8,6 +8,8 @@ import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
+import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.error;
+
 public class SettingController {
     private SettingMap settingMap;
     @FXML
@@ -29,5 +31,10 @@ public class SettingController {
     private void onWindowClose(WindowEvent event) {
         settingMap.getMap().put("bpmCheckBox", String.valueOf(bpmCheckBox.isSelected()));
         settingMap.getMap().put("logCheckBox", String.valueOf(logCheckBox.isSelected()));
+        try {
+            settingMap.mapToJSON();
+        } catch (IOException e) {
+            error("Failed to save setting.json.");
+        }
     }
 }
