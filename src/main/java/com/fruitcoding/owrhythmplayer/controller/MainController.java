@@ -178,6 +178,10 @@ public class MainController {
                 }
             });
 
+            // 음악 선택 전, Mixer 목록 새로고침 (해당 작업 미수행 시, 입출력 장치 변화가 있을 때 정상적으로 음악 재생 불가)
+            audioDevice.setSourceMixerInfos();
+            audioDevice.setTargetMixerInfos();
+
             info(musicFileMap);
             musicSplitMenuButton.setMap(musicFileMap);
             musicSplitMenuButton.setIndex(0);

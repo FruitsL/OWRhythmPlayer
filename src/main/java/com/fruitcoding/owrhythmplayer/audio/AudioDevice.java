@@ -50,7 +50,7 @@ public class AudioDevice {
     /**
      * 재생 장치 목록 불러오기 (@Setter)
      */
-    private void setSourceMixerInfos() {
+    public void setSourceMixerInfos() {
         sourceMixerInfos = Arrays.stream(AudioSystem.getMixerInfo())
                 .map(AudioSystem::getMixer)
                 .flatMap(mixer -> Arrays.stream(mixer.getSourceLineInfo())
@@ -73,7 +73,7 @@ public class AudioDevice {
     /**
      * 출력 장치 목록 불러오기 (@Setter)
      */
-    private void setTargetMixerInfos() {
+    public void setTargetMixerInfos() {
         targetMixerInfos = Arrays.stream(AudioSystem.getMixerInfo())
                 .map(AudioSystem::getMixer)
                 .flatMap(mixer -> Arrays.stream(mixer.getTargetLineInfo())
