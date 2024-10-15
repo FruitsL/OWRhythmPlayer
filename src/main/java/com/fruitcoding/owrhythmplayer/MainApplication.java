@@ -19,6 +19,10 @@ import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 public class MainApplication extends Application {
     MainController mainController;
 
+    public static void main(String[] args) {
+        launch();
+    }
+
     @Override
     public void start(Stage stage) throws IOException, NativeHookException {
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("main-view.fxml"));
@@ -58,9 +62,5 @@ public class MainApplication extends Application {
         } catch (NativeHookException e) {
             error("GlobalHooker Closed Error");
         }
-    }
-
-    public static void main(String[] args) {
-        launch();
     }
 }

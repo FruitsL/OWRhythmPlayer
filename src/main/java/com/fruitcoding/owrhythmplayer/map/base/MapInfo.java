@@ -60,7 +60,7 @@ abstract public class MapInfo {
         isNotePlay = true;
         new Thread(() -> {
             long delay = initDelay * 1_000_000;
-            info(STR."Note time: \{System.nanoTime() - startTime}, Queue Size: \{noteInfos.size()}");
+            info("Note time: " + (System.nanoTime() - startTime) + ", Queue Size: " + noteInfos.size());
             long delayLeft = 0;
             while(!noteInfos.isEmpty() && isNotePlay) {
                 NoteInfo noteInfo = noteInfos.poll();
@@ -78,7 +78,7 @@ abstract public class MapInfo {
                     }
                 } while(delayLeft > 0);
 
-                debug(STR."\{noteInfo.nanoTime()}, \{noteInfo.keyCode()}, \{noteInfo.isPress()}");
+                debug(noteInfo.nanoTime() + ", " + noteInfo.keyCode() + ", " + noteInfo.isPress());
 
                 if(!isNotePlay)
                     return;
@@ -95,7 +95,7 @@ abstract public class MapInfo {
     public void stopNote() {
         isNotePlay = false;
         reverseHotkeyMap.values().forEach(v -> {
-            info(STR."hotkeyMap Release: \{v}");
+            info("hotkeyMap Release: " + v);
             if(v >= 0)
                 robot.keyRelease(v);
         });
@@ -116,7 +116,7 @@ abstract public class MapInfo {
                 if(!isNotePlay)
                     return;
 
-                info(STR."BPM 변경 : \{weapon}");
+                info("BPM 변경 : " + weapon);
                 if(weapon) {
                     pressKey(robot, numToKeyMap.get(10));
                     weapon = false;
@@ -139,11 +139,11 @@ abstract public class MapInfo {
             throw new RuntimeException(e);
         }
         bpmInfos.forEach(bpmInfo -> {
-            info(STR."BPM 입력 : \{bpmInfo.getBpm()}");
+            info("BPM 입력 : " + bpmInfo.getBpm());
             String num = new StringBuilder(Integer.toBinaryString(bpmInfo.getBpm())).reverse().toString();
             for(int i = num.length() - 1; i >= 0; i--) { // TODO: BPM이 매우 크면 가장 작은 값이 무시되는지 확인 필요
                 if(num.charAt(i) == '1') {
-                    info(STR."Press: \{numToKeyMap.get(i)}");
+                    info("Press: " + numToKeyMap.get(i));
                     robot.keyPress(numToKeyMap.get(i));
                 }
             }
@@ -154,7 +154,7 @@ abstract public class MapInfo {
             }
             for(int i = num.length() - 1; i >= 0; i--) {
                 if (num.charAt(i) == '1') {
-                    info(STR."Release: \{numToKeyMap.get(i)}");
+                    info("Release: " + numToKeyMap.get(i));
                     robot.keyRelease(numToKeyMap.get(i));
                 }
             }

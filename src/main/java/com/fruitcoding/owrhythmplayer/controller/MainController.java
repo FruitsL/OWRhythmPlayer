@@ -123,7 +123,7 @@ public class MainController {
         try {
             clipBoard = ClipBoard.getInstance();
         } catch (AWTException e) {
-            error(STR."Failed to initialize clipboard.\n\{e}}");
+            error("Failed to initialize clipboard.\n" + e);
             throw new RuntimeException(e);
         }
 
@@ -131,7 +131,7 @@ public class MainController {
             try {
                 globalKeyMouseListener = new GlobalKeyMouseListener(this);
             } catch (NativeHookException e) {
-                error(STR."GlobalKeyMouseListener not working.\n\{e}");
+                error("GlobalKeyMouseListener not working.\n" + e);
                 throw new RuntimeException(e);
             }
         }
@@ -204,7 +204,7 @@ public class MainController {
                 osuFile = OsuFile.builder()
                         .filePath((String) musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()))
                         .build();
-                AudioFileConverter.getInstance().convertToWAV(STR."\{Paths.get(osuFile.getFile().getAbsolutePath()).getParent()}/\{osuFile.getAudioFileName()}");
+                AudioFileConverter.getInstance().convertToWAV(Paths.get(osuFile.getFile().getAbsolutePath()).getParent() + "/" + osuFile.getAudioFileName());
 
                 if (Boolean.parseBoolean(settingMap.getMap().get("bpmCheckBox")))
                     osuFile.getOsuMapInfo().inputBPM();
@@ -225,7 +225,7 @@ public class MainController {
             }
             player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float) speakerSlider1.getValue());
             player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float) speakerSlider2.getValue());
-            info(STR."Start Time: \{startTime}");
+            info("Start Time: " + startTime);
             Platform.runLater(() -> playButton.setText("중지")); // 다른 스레드에서도 동작시킬 수 있음
         } else if(startTime > 0) {
             stop();
@@ -273,7 +273,7 @@ public class MainController {
             try {
                 osuFile = new OsuFile((String) musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()), new File(String.valueOf(musicSplitMenuButton.getMap().get(musicSplitMenuButton.getText()))));
             } catch (IOException e) {
-                warn(STR."Not found osu file. \{e.toString()}");
+                warn("Not found osu file. " + e.toString());
                 throw new RuntimeException(e);
             } catch (AWTException e) {
                 error(e);

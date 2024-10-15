@@ -11,7 +11,7 @@ public class MainMap extends JSONMap<String, String> {
 
     @Override
     String getFilePath() {
-        return STR."\{System.getProperty("user.dir")}/data/save/main.json";
+        return System.getProperty("user.dir") + "/data/save/main.json";
     }
 
     public MainMap() throws IOException {

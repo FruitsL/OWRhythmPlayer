@@ -88,9 +88,9 @@ public class OszFile {
             }
 
             fileMap.forEach((k, v) -> {
-                info(STR."extension : \{k}");
+                info("extension : " + k);
                 v.forEach((k1, v1) -> {
-                    info(STR."- \{k1} (Path : \{v1}})");
+                    info("- " + k1 + " (Path : " + v1 + ")");
                 });
             });
         }

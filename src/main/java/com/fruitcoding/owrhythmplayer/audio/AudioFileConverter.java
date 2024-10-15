@@ -17,7 +17,7 @@ import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
 public class AudioFileConverter {
     private static volatile AudioFileConverter instance;
 
-    private File wavFile = new File(STR."\{System.getProperty("user.dir")}/data/music.wav");
+    private File wavFile = new File(System.getProperty("user.dir") + "/data/music.wav");
 
     /**
      * 인스턴스를 반환하는 정적 메서드
@@ -39,7 +39,7 @@ public class AudioFileConverter {
      * @param filePath wav로 변환할 오디오 파일 변경
      */
     public void convertToWAV(String filePath) {
-        info(STR."Source : \{filePath}, Target : \{wavFile.getAbsolutePath()}");
+        info("Source : " + filePath + ", Target : " + wavFile.getAbsolutePath());
         ProcessBuilder builder;
         if(System.getProperty("os.name").toLowerCase().contains("window")) {
             builder = new ProcessBuilder("./data/ffmpeg", "-y", "-loglevel", "error", "-i", filePath, wavFile.getAbsolutePath());
@@ -54,13 +54,13 @@ public class AudioFileConverter {
 
             exitCode = process.waitFor();
         } catch (Exception e) {
-            error(STR."Conversion failed: \{e}");
+            error("Conversion failed: " + e);
             throw new RuntimeException(e);
         }
         if (exitCode == 0) {
             info("Conversion successful");
         } else {
-            error(STR."Conversion failed (exitCode : \{exitCode})");
+            error("Conversion failed (exitCode : " + exitCode);
         }
     }
 

@@ -23,7 +23,7 @@ public class HotKeyMap extends JSONMap<Integer, String> {
      */
     @Override
     String getFilePath() {
-        return STR."\{System.getProperty("user.dir")}/data/save/hotkey.json";
+        return System.getProperty("user.dir") + "/data/save/hotkey.json";
     }
 
     public static synchronized HotKeyMap getInstance() throws IOException {

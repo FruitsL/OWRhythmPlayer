@@ -13,7 +13,7 @@ class OsuFileTest {
     @Test
     public void readContent() throws IOException, AWTException, InterruptedException {
         OsuFile oszFile = OsuFile.builder()
-                .filePath(STR."\{System.getProperty("user.dir")}/test/Kaneko Chiharu - INF-B L-aste-R (ML-ysg) [NOVICE].osu")
+                .filePath(System.getProperty("user.dir") + "/test/Kaneko Chiharu - INF-B L-aste-R (ML-ysg) [NOVICE].osu")
                 .build();
         OsuMapInfo osuMapInfo = new OsuMapInfo(oszFile.getCircleSize());
 
@@ -36,12 +36,12 @@ class OsuFileTest {
         osuMapInfo.inputBPM();
 
         info("=== Osu Map Info ===");
-        info(STR."- bpmInfos: \{osuMapInfo.getBpmInfos().size()}");
+        info("- bpmInfos: " + osuMapInfo.getBpmInfos().size());
         while(!osuMapInfo.getBpmInfos().isEmpty()) {
             info(osuMapInfo.getBpmInfos().poll());
         }
 
-        info(STR."- noteInfos: \{osuMapInfo.getNoteInfos().size()}");
+        info("- noteInfos: " + osuMapInfo.getNoteInfos().size());
         while(!osuMapInfo.getNoteInfos().isEmpty()) {
             info(osuMapInfo.getNoteInfos().poll());
         }

@@ -59,7 +59,7 @@ public class GlobalKeyMouseListener extends SwingKeyAdapter {
             @Override
             public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
                 int keyCode = getJavaKeyEvent(nativeKeyEvent).getKeyCode();
-                debug(STR."Pressed: \{keyCode}");
+                debug("Pressed: " + keyCode);
 
                 if(hotkeyController != null) { // 키 변경
                     if(hotKeyMap.getMap().containsKey(keyCode))
@@ -82,7 +82,7 @@ public class GlobalKeyMouseListener extends SwingKeyAdapter {
                         try {
                             mainController.onPlayButtonClick();
                         } catch (UnsupportedAudioFileException | LineUnavailableException | IOException e) {
-                            error(STR."play error.\n\{e}");
+                            error("play error.\n" + e);
                         } catch (AWTException e) {
                             throw new RuntimeException(e);
                         }
@@ -95,14 +95,14 @@ public class GlobalKeyMouseListener extends SwingKeyAdapter {
                         break;
                 }
 
-                info(STR."nativeKeyPressed: \{NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode())} = \{KeyEvent.getKeyText(getJavaKeyEvent(nativeKeyEvent).getKeyCode())}\n"
-                        + STR."KeyEvent = \{nativeKeyEvent.getKeyCode()}, NativeKeyEvent = \{getJavaKeyEvent(nativeKeyEvent).getKeyCode()}");
+                info("nativeKeyPressed: " + NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode()) + " = " + KeyEvent.getKeyText(getJavaKeyEvent(nativeKeyEvent).getKeyCode()) + "\n"
+                        + "KeyEvent = " + nativeKeyEvent.getKeyCode() + ", NativeKeyEvent = " + getJavaKeyEvent(nativeKeyEvent).getKeyCode());
             }
 
             @Override
             public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
                 int keyCode = getJavaKeyEvent(nativeKeyEvent).getKeyCode();
-                debug(STR."Released: \{keyCode}");
+                debug("Released: " + keyCode);
                 if(!keyPressedMap.containsKey(keyCode))
                     return;
                 if(!keyPressedMap.get(keyCode))

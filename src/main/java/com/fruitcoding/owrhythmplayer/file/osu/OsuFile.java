@@ -42,7 +42,7 @@ public class OsuFile extends MapFile {
         readFile();
 
         osuMapInfo = new OsuMapInfo(circleSize);
-        info(STR."timingPoints: \{timingPoints.size()}, hitObjects: \{hitObjects.size()}");
+        info("timingPoints: " + timingPoints.size() + ", hitObjects: " + hitObjects.size());
         timingPoints.forEach(t -> osuMapInfo.addBPMInfosByString(t));
         hitObjects.forEach(n -> osuMapInfo.addNoteInfosByString(n));
     }

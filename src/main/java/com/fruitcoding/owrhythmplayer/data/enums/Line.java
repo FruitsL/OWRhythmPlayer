@@ -25,6 +25,6 @@ public enum Line {
                 return line;
             }
         }
-        throw new IllegalArgumentException(STR."Invalid code: \{code}");
+        throw new IllegalArgumentException("Invalid code: " + code);
     }
 }

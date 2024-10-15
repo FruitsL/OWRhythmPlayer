@@ -50,7 +50,7 @@ public class AudioPlayer {
             setVolume(volume);
             while(System.nanoTime() - startTime < delay); // 정확한 실행을 위한 반복 (1ms 미만 오차)
             audioClip.start();
-            info(STR."Play time: \{System.nanoTime() - startTime}");
+            info("Play time: " + (System.nanoTime() - startTime));
         } else {
             error("Not Playing");
         }

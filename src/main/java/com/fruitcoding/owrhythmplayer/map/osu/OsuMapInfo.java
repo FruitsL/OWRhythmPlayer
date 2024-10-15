@@ -35,7 +35,7 @@ public class OsuMapInfo extends MapInfo {
         String[] infos = info.toString().split(",");
         String[] additionInfos = infos[5].split(":");
 
-        info(STR."noteInfos: \{Long.parseLong(infos[2])}, \{Line.fromCode(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2).getKeyName()}");
+        info("noteInfos: " + Long.parseLong(infos[2]) + ", " + Line.fromCode(((Integer.parseInt(infos[0]) * circleSize / 256) - 1) / 2).getKeyName());
         noteInfos.add(new NoteInfo( Long.parseLong(infos[2]) * 1_000_000, true, reverseHotkeyMap.get(Line.fromCode( Math.round(((float) (Integer.parseInt(infos[0]) * circleSize) / 256) - 1) / 2).getKeyName()) ));
         if(Integer.parseInt(additionInfos[0]) > 10) {
             noteInfos.add(new NoteInfo( Long.parseLong(additionInfos[0]) * 1_000_000 - 1_000, false, reverseHotkeyMap.get(Line.fromCode( Math.round(((float) (Integer.parseInt(infos[0]) * circleSize) / 256) - 1) / 2).getKeyName()) ));

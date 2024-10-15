@@ -9,7 +9,7 @@ public class SettingMap extends JSONMap<String, String> {
 
     @Override
     String getFilePath() {
-        return STR."\{System.getProperty("user.dir")}/data/save/setting.json";
+        return System.getProperty("user.dir") + "/data/save/setting.json";
     }
 
     public static synchronized SettingMap getInstance() throws IOException {

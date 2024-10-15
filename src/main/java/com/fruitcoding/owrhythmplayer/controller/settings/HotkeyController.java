@@ -36,7 +36,7 @@ public class HotkeyController {
 
             if (columnIndex != null && columnIndex == 1) { // 첫 번째 열
                 if (node instanceof Button button) { // 해당 노드가 Button일 경우 텍스트 설정
-                    info(STR."Button : \{button.getId()}");
+                    info("Button : " + button.getId());
                     button.setText(KeyEvent.getKeyText(reverseHotkeyMap.get(button.getId())));
                 }
             }
@@ -62,7 +62,7 @@ public class HotkeyController {
     private void changeHotkey(ActionEvent event) {
         Button btn = (Button)event.getSource();
         btn.setStyle("-fx-font-weight: bold;"); // 버튼 텍스트에 bold 효과 적용
-        explainLabel.setText(STR."변경할 키를 입력해주세요. (ESC: 취소)");
+        explainLabel.setText("변경할 키를 입력해주세요. (ESC: 취소)");
 
         listener.setButton(btn);
         listener.setHotkeyController(this);
