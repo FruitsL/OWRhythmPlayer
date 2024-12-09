@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.locks.LockSupport;
 
 import static com.fruitcoding.owrhythmplayer.controller.MainController.startTime;
 import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.*;
@@ -45,12 +46,29 @@ public class AudioPlayer {
      * @param volume 음악 볼륨
      */
     public void play(long delay, float volume) { // TODO: 몇 곡 하다보면 음악 재생만 안되는 경우가 있음
-        delay *= 1_000_000;
         if(audioClip != null && !audioClip.isRunning()) {
             setVolume(volume);
-            while(System.nanoTime() - startTime < delay); // 정확한 실행을 위한 반복 (1ms 미만 오차)
-            audioClip.start();
-            info("Play time: " + (System.nanoTime() - startTime));
+            audioClip.addLineListener(event -> {
+                if (event.getType() == LineEvent.Type.STOP) {
+                    startTime = 0L;
+                }
+            });
+            new Thread(() -> {
+                long delayLeft = 0;
+                do {
+                    delayLeft = delay + startTime - System.nanoTime();
+                    if(delayLeft > 1_000_000) {
+                        LockSupport.parkNanos(delayLeft - 1_000_000);
+                    } else if(delayLeft > 10_000) {
+                        // 짧은 주기로 대기 (정확도 높임)
+                        LockSupport.parkNanos(delayLeft - 10_000);  // 10 마이크로초 대기
+                    } else {
+                        Thread.onSpinWait();  // CPU 친화적인 스핀 대기
+                    }
+                } while(delayLeft > 0);
+                audioClip.start();
+                info("Play time: " + (System.nanoTime() - startTime));
+            }).start();
         } else {
             error("Not Playing");
         }

@@ -62,7 +62,7 @@ public class OsuMapInfo extends MapInfo {
         }
 
         BPMInfo lastBPMInfo = ((LinkedList<BPMInfo>)bpmInfos).peekLast();
-        if((lastBPMInfo == null) || ((long)Double.parseDouble(infos[0]) * 1_000_000 - lastBPMInfo.getNanoTime() >= 5 * 1_000_000)) { // 신규 BPM 추가
+        if((lastBPMInfo == null) || (lastBPMInfo.getNanoTime() == 0) || ((long)Double.parseDouble(infos[0]) * 1_000_000 - lastBPMInfo.getNanoTime() >= 5 * 1_000_000)) { // 신규 BPM 추가
             bpmInfos.add(new BPMInfo((long)Double.parseDouble(infos[0]) * 1_000_000, (int)(1 + lastSpeed * lastBPM * 100 / getInitBPM())));
         } else { // 기존 BPM 변경
             lastBPMInfo.setBpm((int)(1 + lastSpeed * lastBPM * 100 / getInitBPM()));

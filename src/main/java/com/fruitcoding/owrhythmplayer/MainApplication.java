@@ -2,6 +2,7 @@ package com.fruitcoding.owrhythmplayer;
 
 import com.fruitcoding.owrhythmplayer.controller.MainController;
 import com.fruitcoding.owrhythmplayer.data.json.HotKeyMap;
+import com.fruitcoding.owrhythmplayer.util.LoggerUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -13,18 +14,21 @@ import org.jnativehook.NativeHookException;
 import java.io.IOException;
 import java.util.Map;
 
-import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.error;
-import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.info;
+import static com.fruitcoding.owrhythmplayer.util.LoggerUtil.*;
 
 public class MainApplication extends Application {
     MainController mainController;
+    LoggerUtil loggerUtil;
 
     public static void main(String[] args) {
+        info("start");
         launch();
     }
 
     @Override
     public void start(Stage stage) throws IOException, NativeHookException {
+        loggerUtil = new LoggerUtil();
+
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("main-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 400, 280);
         mainController = fxmlLoader.getController();

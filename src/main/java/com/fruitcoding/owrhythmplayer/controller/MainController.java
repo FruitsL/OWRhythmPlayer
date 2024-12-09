@@ -166,16 +166,7 @@ public class MainController {
             files.forEach(file -> {
                 String extension = file.getName().substring(file.getName().lastIndexOf('.'));
                 info(extension);
-                switch (extension) {
-                    case ".mp3":
-                    case ".ogg":
-                    case ".wav":
-                    case ".osu":
-                        musicFileMap.put(file.getName(), file.getAbsolutePath());
-                        break;
-                    default:
-                        break;
-                }
+                musicFileMap.put(file.getName(), file.getAbsolutePath());
             });
 
             // 음악 선택 전, Mixer 목록 새로고침 (해당 작업 미수행 시, 입출력 장치 변화가 있을 때 정상적으로 음악 재생 불가)
@@ -217,14 +208,16 @@ public class MainController {
                 clipBoard.copyToClipBoard(musicSplitMenuButton.getText().substring(0, musicSplitMenuButton.getText().lastIndexOf('.')));
                 clipBoard.paste();
             }
+
+            if (isOsu && Boolean.parseBoolean(settingMap.getMap().get("bpmCheckBox")))
+                osuFile.getOsuMapInfo().playBPM(Long.parseLong(speakerDelayTextField3.getText()));
             startTime = System.nanoTime();
-            if (isOsu) {
-                if (Boolean.parseBoolean(settingMap.getMap().get("bpmCheckBox")))
-                    osuFile.getOsuMapInfo().playBPM(Long.parseLong(speakerDelayTextField3.getText()));
+            if (isOsu)
                 osuFile.getOsuMapInfo().playNote(Long.parseLong(speakerDelayTextField3.getText()));
-            }
-            player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()), (float) speakerSlider1.getValue());
-            player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()), (float) speakerSlider2.getValue());
+
+            // TODO: 채보, 스피커1, 스피커2의 재생 대기가 이전 것 이후에 실행되고 있음 ex. 스피커1이 1000ms, 스피커2가 1000ms로 지정되어있으면 스피커2는 스피커1이 나오고 1초 뒤에 재생됨
+            player1 = playerInit(wavFile, speakerSplitMenuButton1.getIndex(), Long.parseLong(speakerDelayTextField1.getText()) * 1_000_000, (float) speakerSlider1.getValue());
+            player2 = playerInit(wavFile, speakerSplitMenuButton2.getIndex(), Long.parseLong(speakerDelayTextField2.getText()) * 1_000_000, (float) speakerSlider2.getValue());
             info("Start Time: " + startTime);
             Platform.runLater(() -> playButton.setText("중지")); // 다른 스레드에서도 동작시킬 수 있음
         } else if(startTime > 0) {
@@ -329,11 +322,11 @@ public class MainController {
     public void openURI(ActionEvent event) {
         try {
             switch(((MenuItem)event.getSource()).getId()) {
+                case "userManual":
+                    Desktop.getDesktop().browse(new URI("https://github.com/FruitsL/OWRhythmPlayer/releases"));
+                    break;
                 case "sourceCode":
                     Desktop.getDesktop().browse(new URI("https://github.com/FruitsL/OWRhythmPlayer"));
-                    break;
-                case "recentFile":
-                    Desktop.getDesktop().browse(new URI("https://drive.google.com/file/d/11thazR64Tdlm1pOnwoxinmPdv0j0lKt6/view?usp=sharing"));
                     break;
                 default:
                     break;

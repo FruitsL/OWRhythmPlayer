@@ -24,9 +24,8 @@
                     <!--MenuItem mnemonicParsing="false" text="단축키 설정" onAction="#openMacroSetting"/-->
                 </Menu>
                 <Menu mnemonicParsing="false" text="도움말">
-                    <MenuItem mnemonicParsing="false" text="사용 설명서"/>
+                    <MenuItem mnemonicParsing="false" id="userManual" text="사용 설명서" onAction="#openURI"/>
                     <MenuItem mnemonicParsing="false" id="sourceCode" text="소스 코드 바로가기" onAction="#openURI"/>
-                    <MenuItem mnemonicParsing="false" id="recentFile" text="최신 파일 다운로드" onAction="#openURI"/>
                 </Menu>
             </MenuBar>
         </top>
